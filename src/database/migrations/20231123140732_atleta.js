@@ -2,8 +2,8 @@ exports.up = function(knex) {
   return knex.schema.createTable("atleta", (table) => {
     table.uuid("id").primary().unique().notNullable();
     table.integer("usuario").notNullable();
-    table.string("nomeResponsavel").notNullable();
-    table.string("parentescoResponsavel").notNullable();
+    table.string("nomeResponsavel");
+    table.string("parentescoResponsavel");
     table.uuid("modalidade").notNullable();
     table.uuid("treinador").notNullable();
     table.string("clubeOuAssociacao");
@@ -13,8 +13,8 @@ exports.up = function(knex) {
     table.integer("numRegistroConfederacao");
     table.string("federacaoInternacional");
     table.integer("numRegistroInternacional");
-    table.string("horariosTreinamento").notNullable();
     table.bool("cadeirante").notNullable();
+    table.enum("amputado", ["MIE, MID, MSE, MSD, MMII, MMSS, Não"]).notNullable();
     table.string("atletaGuia");
     table.string("classificacaoFuncional");
     table.string("historicoDeficiencia");
