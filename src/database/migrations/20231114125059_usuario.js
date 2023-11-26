@@ -19,7 +19,7 @@ exports.up = function(knex) {
     table.integer("rg").notNullable();
     table.date("dataEmissaoRg").notNullable();
     table.string("orgaoExpedidorRg").notNullable();
-    table.integer("cpf").unique().notNullable();
+    table.bigint("cpf").unique().notNullable();
     table.enum("sexo", ['Feminino', 'Masculino']).notNullable();
     table.enum("estadoCivil", ['Solteiro', 'Casado', 'Separado', 'Divorciado', 'Viuvo']).notNullable();
     table.string("logadouro").notNullable();
