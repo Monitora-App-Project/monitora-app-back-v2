@@ -14,7 +14,7 @@ exports.up = function(knex) {
     table.string("federacaoInternacional");
     table.integer("numRegistroInternacional");
     table.bool("cadeirante").notNullable();
-    table.enum("amputado", ["MIE, MID, MSE, MSD, MMII, MMSS, Não"]).notNullable();
+    table.enum("amputado", ["MIE", "MID", "MSE", "MSD", "MMII", "MMSS", "Não"]).notNullable();
     table.string("atletaGuia");
     table.string("classificacaoFuncional");
     table.string("historicoDeficiencia");
