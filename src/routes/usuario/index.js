@@ -11,6 +11,11 @@ usuarioRouter.get('/',
   UsuarioController.getAll
 );
 usuarioRouter.get(
+  '/fields',
+  // UsuarioValidator.getById,
+  UsuarioController.getByFields
+);
+usuarioRouter.get(
   '/:matricula',
   UsuarioValidator.getById,
   UsuarioController.getById

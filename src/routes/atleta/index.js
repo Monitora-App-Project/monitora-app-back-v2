@@ -11,6 +11,11 @@ atletaRouter.get('/',
   AtletaController.getAll
 );
 atletaRouter.get(
+  '/fields',
+  // AteltaValidator.getById,
+  AtletaController.getByFields
+);
+atletaRouter.get(
   '/:usuario',
   AtletaValidator.getByUsuario,
   AtletaController.getByUsuario

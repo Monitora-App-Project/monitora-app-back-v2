@@ -7,15 +7,17 @@ module.exports = {
   },
 
   async getAll() {
-    const result = await connection('treinador').select('*');
+    const result = await connection('treinador')
+    .select('treinador.*', 'usuario.*')
+    .innerJoin('usuario', 'treinador.usuario', 'usuario.matricula');
     return result;
   },
 
   async getById(usuario) {
     const result = await connection('treinador')
       .where({ usuario })
-      .select('*')
-      .first();
+      .select('treinador.*', 'usuario.*')
+      .innerJoin('usuario', 'treinador.usuario', 'usuario.matricula');
     return result;
   },
 
@@ -33,9 +35,9 @@ module.exports = {
 
   async getByFields(fields) {
     const result = await connection('treinador')
-      .where(fields)
-      .select('*')
-      .first();
+    .select('treinador.*', 'usuario.*')
+    .innerJoin('usuario', 'treinador.usuario', 'usuario.matricula')
+    .where(fields);
     return result;
   },
 };

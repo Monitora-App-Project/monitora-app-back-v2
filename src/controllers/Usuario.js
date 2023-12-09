@@ -72,6 +72,19 @@ module.exports = {
     }
   },
 
+  async getByFields(request, response) {
+    try {
+      const fields = request.body;
+      const result = await UsuarioModel.getByFields(fields);
+      return response.status(200).json(result);
+    } catch (err) {
+      console.error(`Usuario getByUsuario failed: ${err}`);
+      return response.status(500).json({
+        notification: 'Internal server error',
+      });
+    }
+  },
+
   async update(request, response) {
     try {
       const { matricula } = request.params;
