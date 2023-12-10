@@ -8,7 +8,10 @@ async function calculaIdade(matriculaAtleta){
       dataNascimento = dataNascimento[0].dataNascimento; // retorna o JSON dentro de uma array
       const dataAtual = new Date();
       const diferencaEmMilissegundos = dataAtual - dataNascimento;
-      const idade = new Date(diferencaEmMilissegundos);
+      const milissegundosPorAno = 1000 * 60 * 60 * 24 * 365.25; // Considera anos bissextos
+      const diferencaEmAnos = diferencaEmMilissegundos / milissegundosPorAno;
+    
+      const idade = Math.floor(diferencaEmAnos);
       return(idade);
   }
   catch (err) {
@@ -41,12 +44,10 @@ module.exports = {
       // id           -> incremental, gerado pelo banco
       // horaDaColeta -> gerado pelo do banco 
       teste.idModalidade = await pegaModalidade(matriculaAtleta);
-      console.log(teste.idModalidade);
       teste.idade = await calculaIdade(matriculaAtleta); 
-      console.log(teste);
 
-      await TesteModel.create(teste);
-      return response.status(201);
+      const idTeste = await TesteModel.create(teste);
+      return response.status(201).json({id: idTeste});
     } catch (err) {
       console.error(`Teste creation failed: ${err}`);
       return response.status(500).json({
