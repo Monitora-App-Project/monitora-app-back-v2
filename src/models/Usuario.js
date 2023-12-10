@@ -1,4 +1,6 @@
 const connection = require('../database/connection');
+require('dotenv').config();
+const { getByUsuario } = require('./Atleta');
 
 module.exports = {
   async create(usuario) {
@@ -8,7 +10,34 @@ module.exports = {
 
   async getAll() {
     const result = await connection('usuario').select('*');
-    return result;
+    const usuarios = [];
+
+    for (const user of result) {
+      if (user.tipo === process.env.ATLETA_SECRET) {
+        const atletas = await connection('atleta').select('*');
+        const atleta = atletas.filter((element) => element.usuario === user.matricula);
+        user.info = atleta;
+      }
+      if (user.tipo === process.env.TREINADOR_SECRET) {
+        const treinadores = await connection('treinador').select('*');
+        const treinador = treinadores.filter((element) => element.usuario === user.matricula);
+        user.info = treinador;
+      }
+      if (user.tipo === process.env.ADMIN_SECRET) {
+        const admins = await connection('professor').select('*');
+        const admin = admins.filter((element) => element.usuario === user.matricula);
+        user.info = admin;
+      }
+      usuarios.push(user);
+    }
+
+    return usuarios;
+    //else if (result.type === 'professor') {
+    //   usuario = new Professor(result.matricula, result.type, result.disciplina);
+    // } else {
+    //   usuario = new Usuario(result.matricula, result.type);
+    // }
+    //return result;
   },
 
   async getById(matricula) {

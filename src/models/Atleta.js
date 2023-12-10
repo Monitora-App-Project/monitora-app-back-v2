@@ -7,14 +7,17 @@ module.exports = {
   },
 
   async getAll() {
-    const result = await connection('atleta').select('*');
+    const result = await connection('atleta')
+    .select('atleta.*', 'usuario.*')
+    .innerJoin('usuario', 'atleta.usuario', 'usuario.matricula');
     return result;
   },
 
   async getByUsuario(usuario) {
     const result = await connection('atleta')
       .where({ usuario })
-      .select('*');
+      .select('atleta.*', 'usuario.*')
+      .innerJoin('usuario', 'atleta.usuario', 'usuario.matricula');
     return result;
   },
 
@@ -32,9 +35,9 @@ module.exports = {
 
   async getByFields(fields) {
     const result = await connection('atleta')
-      .where(fields)
-      .select('*')
-      .first();
+    .select('atleta.*', 'usuario.*')
+    .innerJoin('usuario', 'atleta.usuario', 'usuario.matricula')
+    .where(fields);
     return result;
   },
 };

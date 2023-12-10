@@ -11,6 +11,11 @@ treinadorRouter.get('/',
   TreinadorController.getAll
 );
 treinadorRouter.get(
+  '/fields',
+  // TreinadorValidator.getById,
+  TreinadorController.getByFields
+);
+treinadorRouter.get(
   '/:id',
   TreinadorValidator.getById,
   TreinadorController.getById
