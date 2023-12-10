@@ -38,4 +38,19 @@ module.exports = {
       .first();
     return result;
   },
+
+  async getDataNascimento(matricula){
+    const result = await connection('usuario')
+      .where({ matricula })
+      .select('dataNascimento');
+    return result;
+  },
+
+  async getModalidadeAtleta(matricula) {
+    const result = await connection('usuario')
+      .leftJoin('atleta', 'usuario.matricula', 'atleta.usuario')
+      .select('atleta.modalidade')
+      .where({ matricula });
+    return result;
+  },
 };
