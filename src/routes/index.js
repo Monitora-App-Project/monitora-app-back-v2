@@ -5,6 +5,7 @@ const treinadorRoutes = require('./treinador');
 const modalidadeRoutes = require('./modalidade');
 const atletaRoutes = require('./atleta');
 const professorRoutes = require('./professor');
+const testeRoutes = require('./teste')
 
 const routes = express.Router();
 
@@ -13,5 +14,6 @@ routes.use('/treinador', treinadorRoutes);
 routes.use('/modalidade', modalidadeRoutes);
 routes.use('/atleta', atletaRoutes);
 routes.use('/professor', professorRoutes);
+routes.use('/teste', testeRoutes);
 
 module.exports = routes;
