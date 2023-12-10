@@ -29,8 +29,8 @@ exports.up = function(knex) {
       .inTable("tipoTeste")
       .onDelete("cascade");
     
-    table.timestamp("idade")      // O calculo eh feito antes de inserir o dado na tabela (horaDaColeta - nascimento)
-      .notNullable();             // Os tipos sao diferentes, mas segundo o chat o Postgre converte automaticamente
+    table.integer("idade")        // O calculo eh feito antes de inserir o dado na tabela (horaDaColeta - nascimento)
+      .notNullable();            
   })
 };
 
