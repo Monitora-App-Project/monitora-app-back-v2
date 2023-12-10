@@ -12,4 +12,18 @@ testeRouter.post(
   TesteController.create
 );
 
+testeRouter.get('/',
+  TesteController.getAll
+);
+
+testeRouter.get('/:id',
+  TesteValidator.getById,
+  TesteController.getById
+);
+
+testeRouter.delete('/:id',
+  TesteValidator.delete,
+  TesteController.delete
+);
+
 module.exports = testeRouter;

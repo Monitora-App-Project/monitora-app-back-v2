@@ -11,5 +11,17 @@ module.exports = {
       matriculaAtleta: Joi.number().integer().required(),
       idTipoTeste: Joi.number().integer().required()
     })
+  }),
+  
+  getById: celebrate({
+    [Segments.PARAMS]: Joi.object().keys({
+      id: Joi.number().integer().required(),
+    }),
+  }),
+
+  delete: celebrate({
+    [Segments.PARAMS]: Joi.object().keys({
+      id: Joi.number().integer().required(),
+    }),
   })
 };
