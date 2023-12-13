@@ -16,28 +16,31 @@ module.exports = {
     }),
   }),
 
-  // getByTeste: celebrate({
-  //   [Segments.PARAMS]: Joi.object().keys({
-  //     idTeste: Joi.number().required(),
-  //   }),
-  // }),
+  getByTeste: celebrate({
+    [Segments.PARAMS]: Joi.object().keys({
+      idTeste: Joi.number().required(),
+    }),
+  }),
 
-  // update: celebrate({
-  //   [Segments.PARAMS]: Joi.object().keys({
-  //     idTeste: Joi.number().required(),
-  //   }),
-  //   [Segments.BODY]: Joi.object().keys({
-  //     idTeste: Joi.number().optional(),
-  //     cmj1: Joi.number().optional(),
-  //     cmj2: Joi.number().optional(),
-  //     cmj3: Joi.number().optional(),
-  //     obsCmj: Joi.string().optional(),
-  //   }),
-  // }),
+  update: celebrate({
+    [Segments.PARAMS]: Joi.object().keys({
+      idTeste: Joi.number().required(),
+    }),
+    [Segments.BODY]: Joi.object().keys({
+      nivelSono: Joi.number().integer().optional(),
+      nivelStress: Joi.number().integer().optional(),
+      nivelFadiga: Joi.number().integer().optional(),
+      nivelDorMuscular: Joi.number().integer().optional(),
+      nivelPsr: Joi.number().integer().optional(),
+      horasSonoNoite: Joi.number().optional(),
+      diaDaSemana: Joi.number().integer().optional(),   // Provisorio
+      semanaDoAno: Joi.number().integer().optional(),   // Provisorio
+    }),
+  }),
 
-  // delete: celebrate({
-  //   [Segments.PARAMS]: Joi.object().keys({
-  //     idTeste: Joi.number().required(),
-  //   }),
-  // }),
+  delete: celebrate({
+    [Segments.PARAMS]: Joi.object().keys({
+      idTeste: Joi.number().required(),
+    }),
+  }),
 };

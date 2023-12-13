@@ -21,7 +21,7 @@ module.exports = {
   },
 
   async getByTeste(idTeste) {
-    const result = await connection('cmj')
+    const result = await connection('hooper')
       .select(
         'hooper.*',
         'teste.horaDaColeta',
@@ -35,24 +35,25 @@ module.exports = {
     return result;
   },
   
+  async getByFields(fields) {
+    const result = await connection('hooper')
+    .select('hooper.*', 'teste.*')
+    .innerJoin('teste', 'hooper.idTeste', 'teste.id')
+    .where(fields);
+    return result;
+  },
 
-  // async updateByTeste(idTeste, cmj) {
-  //   const result = await connection('cmj')
-  //     .where({ idTeste })
-  //     .update(cmj);
-  //   return result;
-  // },
+  async updateByTeste(idTeste, hooper) {
+    const result = await connection('hooper')
+      .where({ idTeste })
+      .update(hooper);
+    return result;
+  },
 
-  // async deleteByTeste(idTeste) {
-  //   const result = await connection('cmj').where({ idTeste }).delete();
-  //   return result;
-  // },
+  async deleteByTeste(idTeste) {
+    const result = await connection('hooper').where({ idTeste }).delete();
+    return result;
+  },
 
-  // async getByFields(fields) {
-  //   const result = await connection('cmj')
-  //   .select('cmj.*', 'teste.*')
-  //   .innerJoin('teste', 'cmj.idTeste', 'teste.id')
-  //   .where(fields);
-  //   return result;
-  // },
+  
 };

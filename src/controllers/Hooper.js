@@ -83,60 +83,60 @@ module.exports = {
     }
   },
 
-  // async getByTeste(request, response) {
-  //   try {
-  //     const { idTeste } = request.params;
-  //     const result = await CMJModel.getByTeste(idTeste);
-  //     return response.status(200).json(result);
-  //   } catch (err) {
-  //     console.error(`CMJ getByTeste failed: ${err}`);
-  //     return response.status(500).json({
-  //       notification: 'Internal server error',
-  //     });
-  //   }
-  // },
+  async getByFields(request, response) {
+    try {
+      const fields = request.body;
+      const result = await HooperModel.getByFields(fields);
+      return response.status(200).json(result);
+    } catch (err) {
+      console.error(`Hooper getByFields failed: ${err}`);
+      return response.status(500).json({
+        notification: 'Internal server error',
+      });
+    }
+  },
 
-  // async getByFields(request, response) {
-  //   try {
-  //     const fields = request.body;
-  //     const result = await CMJModel.getByFields(fields);
-  //     return response.status(200).json(result);
-  //   } catch (err) {
-  //     console.error(`CMJ getByFields failed: ${err}`);
-  //     return response.status(500).json({
-  //       notification: 'Internal server error',
-  //     });
-  //   }
-  // },
+  async getByTeste(request, response) {
+    try {
+      const { idTeste } = request.params;
+      const result = await HooperModel.getByTeste(idTeste);
+      return response.status(200).json(result);
+    } catch (err) {
+      console.error(`Hooper getByTeste failed: ${err}`);
+      return response.status(500).json({
+        notification: 'Internal server error',
+      });
+    }
+  },
 
-  // async update(request, response) {
-  //   try {
-  //     const { idTeste } = request.params;
-  //     const cmj = request.body;
-  //     const stillExistFieldsToUpdate = Object.values(cmj).length > 0;
-  //     if (stillExistFieldsToUpdate) {
-  //       await CMJModel.updateByTeste(idTeste, cmj);
-  //     }
-  //     return response.status(200).json('OK');
-  //   } catch (err) {
-  //     console.error(`CMJ update failed: ${err}`);
-  //     return response.status(500).json({
-  //       notification: 'Internal server error',
-  //     });
-  //   }
-  // },
+  async update(request, response) {
+    try {
+      const { idTeste } = request.params;
+      const hooper = request.body;
+      const stillExistFieldsToUpdate = Object.values(hooper).length > 0;
+      if (stillExistFieldsToUpdate) {
+        await HooperModel.updateByTeste(idTeste, hooper);
+      }
+      return response.status(200).json('OK');
+    } catch (err) {
+      console.error(`Hooper update failed: ${err}`);
+      return response.status(500).json({
+        notification: 'Internal server error',
+      });
+    }
+  },
 
-  // async delete(request, response) {
-  //   try {
-  //     const { idTeste } = request.params;
-  //     await CMJModel.deleteByTeste(idTeste);
-  //     return response.status(200).json("OK");
-  //   } catch (err) {
-  //     console.error(`CMJ delete failed: ${err}`);
-  //     return response.status(500).json({
-  //       notification: 'Internal server error',
-  //     });
-  //   }
-  // },
+  async delete(request, response) {
+    try {
+      const { idTeste } = request.params;
+      await HooperModel.deleteByTeste(idTeste);
+      return response.status(200).json("OK");
+    } catch (err) {
+      console.error(`Hooper delete failed: ${err}`);
+      return response.status(500).json({
+        notification: 'Internal server error',
+      });
+    }
+  },
 
 };

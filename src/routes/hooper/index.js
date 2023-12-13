@@ -11,10 +11,28 @@ hooperRouter.post(
   HooperValidator.create,
   HooperController.create
 );
-
 hooperRouter.get(
   '/',
   HooperController.getAll
-)
+);
+hooperRouter.get(
+  '/fields',
+  HooperController.getByFields
+);
+hooperRouter.get(
+  '/:idTeste',
+  HooperValidator.getByTeste,
+  HooperController.getByTeste
+);
+hooperRouter.put(
+  '/:idTeste',
+  HooperValidator.update,
+  HooperController.update
+);
+hooperRouter.delete(
+  '/:idTeste',
+  HooperValidator.delete,
+  HooperController.delete
+);
 
 module.exports = hooperRouter;
