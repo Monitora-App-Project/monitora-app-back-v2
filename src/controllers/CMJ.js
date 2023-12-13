@@ -72,6 +72,19 @@ module.exports = {
     }
   },
 
+  async getByDate(request, response) {
+    try {
+      const fields = request.body;
+      const result = await CMJModel.getByDate(fields);
+      return response.status(200).json(result);
+    } catch (err) {
+      console.error(`CMJ getByDate failed: ${err}`);
+      return response.status(500).json({
+        notification: 'Internal server error',
+      });
+    }
+  },
+
   async update(request, response) {
     try {
       const { idTeste } = request.params;
