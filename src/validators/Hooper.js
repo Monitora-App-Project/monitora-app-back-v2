@@ -1,0 +1,46 @@
+const { celebrate, Segments, Joi } = require('celebrate');
+
+module.exports = {
+  create: celebrate({
+    [Segments.BODY]: Joi.object().keys({
+      matriculaAtleta: Joi.number().integer().required(), // Para criar o teste geral
+      
+      nivelSono: Joi.number().integer().required(),
+      nivelStress: Joi.number().integer().required(),
+      nivelFadiga: Joi.number().integer().required(),
+      nivelDorMuscular: Joi.number().integer().required(),
+      nivelPsr: Joi.number().integer().required(),
+      horasSonoNoite: Joi.number().required(),
+      diaDaSemana: Joi.number().integer().required(),   // Provisorio
+      semanaDoAno: Joi.number().integer().required(),   // Provisorio
+    }),
+  }),
+
+  getByTeste: celebrate({
+    [Segments.PARAMS]: Joi.object().keys({
+      idTeste: Joi.number().required(),
+    }),
+  }),
+
+  update: celebrate({
+    [Segments.PARAMS]: Joi.object().keys({
+      idTeste: Joi.number().required(),
+    }),
+    [Segments.BODY]: Joi.object().keys({
+      nivelSono: Joi.number().integer().optional(),
+      nivelStress: Joi.number().integer().optional(),
+      nivelFadiga: Joi.number().integer().optional(),
+      nivelDorMuscular: Joi.number().integer().optional(),
+      nivelPsr: Joi.number().integer().optional(),
+      horasSonoNoite: Joi.number().optional(),
+      diaDaSemana: Joi.number().integer().optional(),   // Provisorio
+      semanaDoAno: Joi.number().integer().optional(),   // Provisorio
+    }),
+  }),
+
+  delete: celebrate({
+    [Segments.PARAMS]: Joi.object().keys({
+      idTeste: Joi.number().required(),
+    }),
+  }),
+};

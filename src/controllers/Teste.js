@@ -39,7 +39,7 @@ module.exports = {
   async create(request, response) {
     try {
       const teste = request.body;                         // Daqui vem matricula do atleta e tipo do teste    
-      const matriculaAtleta = teste.matriculaAtleta;        // Como pego a matricula da variavel Teste?
+      const matriculaAtleta = teste.matriculaAtleta;      
 
       // id           -> incremental, gerado pelo banco
       // horaDaColeta -> gerado pelo do banco 

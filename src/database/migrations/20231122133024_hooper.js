@@ -12,7 +12,7 @@ exports.up = function(knex) {
     table.tinyint("nivelDorMuscular").notNullable();
     table.tinyint("nivelPsr").notNullable();
     
-    table.time("horasSonoNoite").notNullable();
+    table.float("horasSonoNoite").notNullable();
 
     table.integer("diaDaSemana").notNullable();     // Calculados a partir de teste.dataDaColeta
     table.integer("semanaDoAno").notNullable();
