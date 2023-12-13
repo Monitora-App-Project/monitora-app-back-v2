@@ -11,8 +11,6 @@ module.exports = {
       nivelDorMuscular: Joi.number().integer().required(),
       nivelPsr: Joi.number().integer().required(),
       horasSonoNoite: Joi.number().required(),
-      diaDaSemana: Joi.number().integer().required(),   // Provisorio
-      semanaDoAno: Joi.number().integer().required(),   // Provisorio
     }),
   }),
 
@@ -33,8 +31,6 @@ module.exports = {
       nivelDorMuscular: Joi.number().integer().optional(),
       nivelPsr: Joi.number().integer().optional(),
       horasSonoNoite: Joi.number().optional(),
-      diaDaSemana: Joi.number().integer().optional(),   // Provisorio
-      semanaDoAno: Joi.number().integer().optional(),   // Provisorio
     }),
   }),
 

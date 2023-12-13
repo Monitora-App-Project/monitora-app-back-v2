@@ -46,8 +46,8 @@ module.exports = {
       teste.idModalidade = await pegaModalidade(matriculaAtleta);
       teste.idade = await calculaIdade(matriculaAtleta); 
 
-      const idTeste = await TesteModel.create(teste);
-      return response.status(201).json({id: idTeste});
+      const dadosTeste = await TesteModel.create(teste);
+      return response.status(201).json({dadosTeste});
     } catch (err) {
       console.error(`Teste creation failed: ${err}`);
       return response.status(500).json({

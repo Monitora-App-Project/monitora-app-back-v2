@@ -53,7 +53,5 @@ module.exports = {
   async deleteByTeste(idTeste) {
     const result = await connection('hooper').where({ idTeste }).delete();
     return result;
-  },
-
-  
+  },  
 };

@@ -6,6 +6,19 @@ const { v4: uuidv4 } = require('uuid');
 const idTipoTeste = 2;
 require('dotenv').config();
 
+// Returns the ISO week of the date.
+Date.prototype.getWeek = function() {
+  var date = new Date(this.getTime());
+  date.setHours(0, 0, 0, 0);
+  // Thursday in current week decides the year.
+  date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+  // January 4 is always in week 1.
+  var week1 = new Date(date.getFullYear(), 0, 4);
+  // Adjust to Thursday in week 1 and count number of weeks from date to week1.
+  return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000
+                        - 3 + (week1.getDay() + 6) % 7) / 7);
+}
+
 async function calculaIdade(matriculaAtleta){
   try{
       let dataNascimento = await UsuarioModel.getDataNascimento(matriculaAtleta);
@@ -51,16 +64,20 @@ module.exports = {
       teste.idTipoTeste = idTipoTeste;
       teste.idModalidade = await pegaModalidade(matriculaAtleta);
       teste.idade = await calculaIdade(matriculaAtleta);
-      let idTeste = await TesteModel.create(teste);
-      idTeste = idTeste[0].id; 
+
+      const dadosTeste = await TesteModel.create(teste);
+      const idTeste = dadosTeste[0].id;
+      const horaDaColeta = dadosTeste[0].horaDaColeta;
+      const data = new Date(horaDaColeta);
 
       // Cria hooper
       delete hooper.matriculaAtleta;
       hooper.id = uuidv4();
       hooper.idTeste = idTeste; 
-
-      // PROVISORIO: Ainda entra com dia da semana e semana do ano
+      hooper.diaDaSemana = data.getDay();   // 0 a 6 
+      hooper.semanaDoAno = data.getWeek();  // Padrao ISO-8601
       console.log(hooper);
+
       await HooperModel.create(hooper);
       return response.status(201).json({ id: hooper.id });
     } catch (err) {
