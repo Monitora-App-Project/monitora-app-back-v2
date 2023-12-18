@@ -55,4 +55,17 @@ module.exports = {
     .where(fields);
     return result;
   },
+
+  async getByDate(fields) {
+    const result = await connection('cmj')
+    .select('cmj.*', 'teste.*')
+    .innerJoin('teste', 'cmj.idTeste', 'teste.id')
+    .where(builder => {
+      if (fields.dataColetaMin && fields.dataColetaMax) {
+        builder.whereBetween('horaDaColeta', [fields.dataColetaMin, fields.dataColetaMax]);
+      }
+    });
+  
+    return result;
+  }
 };

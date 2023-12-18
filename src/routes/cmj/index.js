@@ -16,6 +16,11 @@ cmjRouter.get(
   CMJController.getByFields
 );
 cmjRouter.get(
+  '/date',
+  // AteltaValidator.getById,
+  CMJController.getByDate
+);
+cmjRouter.get(
   '/:idTeste',
   CMJValidator.getByTeste,
   CMJController.getByTeste
