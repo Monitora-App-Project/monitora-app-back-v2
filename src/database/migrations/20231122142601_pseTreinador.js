@@ -12,7 +12,8 @@ exports.up = function(knex) {
         'Força',
         'Competição'])
       .notNullable();
-    //Falta 'faseTreinamento', vai estar em outra migration
+    
+    table.string("faseTreinamento").notNullable();
     table.text("obsBemEstar");
     table.text("obsPse");
 
