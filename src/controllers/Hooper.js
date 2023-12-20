@@ -1,10 +1,12 @@
 const HooperModel = require('../models/Hooper');
 const TesteModel = require('../models/Teste');
-const {pegaModalidade, calculaIdade} = require('../utilities');
 
+const {pegaModalidade, calculaIdade} = require('../utilities');
 const { v4: uuidv4 } = require('uuid');
-const idTipoTeste = 2;
+
 require('dotenv').config();
+
+const idTipoTeste = 2;
 
 // Returns the ISO week of the date.
 Date.prototype.getWeek = function() {
@@ -22,30 +24,31 @@ Date.prototype.getWeek = function() {
 module.exports = {
   async create(request, response) {
     try {
-      const hooper = request.body;
-      const teste = {};    // JSON que guarda os dados do teste geral
+      const hooper = request.body;      // Chegam dados do teste geral e do hooper
+      const teste = {};               // JSON que guarda os dados do teste geral
       const matriculaAtleta = hooper.matriculaAtleta;
+      const id = uuidv4(); 
 
       // Cria teste geral
+      teste.id = id;
       teste.matriculaAtleta = matriculaAtleta;
       teste.idTipoTeste = idTipoTeste;
       teste.idModalidade = await pegaModalidade(matriculaAtleta);
       teste.idade = await calculaIdade(matriculaAtleta);
 
       const dadosTeste = await TesteModel.create(teste);
-      const idTeste = dadosTeste[0].id;
-      const horaDaColeta = dadosTeste[0].horaDaColeta;
+      const dataDaColeta = dadosTeste[0].dataDaColeta;
       const data = new Date(horaDaColeta);
 
       // Cria hooper
       delete hooper.matriculaAtleta;
-      hooper.id = uuidv4();
-      hooper.idTeste = idTeste; 
+      hooper.idTeste = id;
       hooper.diaDaSemana = data.getDay();   // 0 a 6 
-      hooper.semanaDoAno = data.getWeek();  // Padrao ISO-8601
+      hooper.semanaDoAno = data.getWeek();  // Padrao ISO-
+      // O restante dos dados a esta no objeto hooper
 
       await HooperModel.create(hooper);
-      return response.status(201).json({ id: hooper.id });
+      return response.status(201).json({ id: hooper.idTeste, horaDaColeta : horaDaColeta });
     } catch (err) {
       console.error(`Hooper creation failed: ${err}`);
       return response.status(500).json({
@@ -92,6 +95,19 @@ module.exports = {
     }
   },
 
+  async getByDate(request, response) {
+    try {
+      const fields = request.body;
+      const result = await HooperModel.getByDate(fields);
+      return response.status(200).json(result);
+    } catch (err) {
+      console.error(`Hooper getByDate failed: ${err}`);
+      return response.status(500).json({
+        notification: 'Internal server error',
+      });
+    }
+  },
+
   async update(request, response) {
     try {
       const { idTeste } = request.params;
@@ -113,6 +129,7 @@ module.exports = {
     try {
       const { idTeste } = request.params;
       await HooperModel.deleteByTeste(idTeste);
+      await TesteModel.deleteById(idTeste);
       return response.status(200).json("OK");
     } catch (err) {
       console.error(`Hooper delete failed: ${err}`);

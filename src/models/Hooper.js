@@ -43,6 +43,19 @@ module.exports = {
     return result;
   },
 
+  async getByDate(fields) {
+    const result = await connection('hooper')
+    .select('hooper.*', 'teste.*')
+    .innerJoin('teste', 'hooper.idTeste', 'teste.id')
+    .where(builder => {
+      if (fields.dataColetaMin && fields.dataColetaMax) {
+        builder.whereBetween('horaDaColeta', [fields.dataColetaMin, fields.dataColetaMax]);
+      }
+    });
+  
+    return result;
+  },
+
   async updateByTeste(idTeste, hooper) {
     const result = await connection('hooper')
       .where({ idTeste })

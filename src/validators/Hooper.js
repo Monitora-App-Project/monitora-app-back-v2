@@ -3,7 +3,7 @@ const { celebrate, Segments, Joi } = require('celebrate');
 module.exports = {
   create: celebrate({
     [Segments.BODY]: Joi.object().keys({
-      matriculaAtleta: Joi.number().integer().required(), // Para criar o teste geral
+      matriculaAtleta: Joi.number().integer().required(),
       
       nivelSono: Joi.number().integer().required(),
       nivelStress: Joi.number().integer().required(),
@@ -16,13 +16,13 @@ module.exports = {
 
   getByTeste: celebrate({
     [Segments.PARAMS]: Joi.object().keys({
-      idTeste: Joi.number().required(),
+      idTeste: Joi.string().guid({version: 'uuidv4'}).required(),
     }),
   }),
 
   update: celebrate({
     [Segments.PARAMS]: Joi.object().keys({
-      idTeste: Joi.number().required(),
+      idTeste: Joi.string().guid({version: 'uuidv4'}).required(),
     }),
     [Segments.BODY]: Joi.object().keys({
       nivelSono: Joi.number().integer().optional(),
@@ -36,7 +36,7 @@ module.exports = {
 
   delete: celebrate({
     [Segments.PARAMS]: Joi.object().keys({
-      idTeste: Joi.number().required(),
+      idTeste: Joi.string().guid({version: 'uuidv4'}).required(),
     }),
   }),
 };
