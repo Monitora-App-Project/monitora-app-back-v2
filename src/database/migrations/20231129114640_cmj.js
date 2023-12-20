@@ -1,10 +1,9 @@
 exports.up = function(knex) {
   return knex.schema.createTable("cmj", (table) => {
-    table.uuid("id")      // checar se cria automaticamente mesmo ou se precisa de uma funcao especial
+    table.uuid("idTeste")      
       .primary()
       .unique()
       .notNullable();
-    table.integer("idTeste").notNullable();
     
     table.float("cmj1").notNullable();
     table.float("cmj2").notNullable();

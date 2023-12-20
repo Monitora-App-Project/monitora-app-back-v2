@@ -1,10 +1,9 @@
 exports.up = function(knex) {
   return knex.schema.createTable("fskt", (table) => {
-    table.uuid("id")      
+    table.uuid("idTeste")      
       .primary()
       .unique()
       .notNullable();
-    table.integer("idTeste").notNullable();
     
     table.string("local").notNullable();
     table.integer("categoria").notNullable();

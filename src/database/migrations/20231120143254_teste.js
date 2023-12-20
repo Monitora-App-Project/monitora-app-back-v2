@@ -1,6 +1,6 @@
 exports.up = function(knex) {
   return knex.schema.createTable("teste", (table) => {
-    table.increments("id")
+    table.uuid("id")
       .primary()
       .unique()         
       .notNullable();   

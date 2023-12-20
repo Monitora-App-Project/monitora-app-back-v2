@@ -1,10 +1,9 @@
 exports.up = function(knex) {
   return knex.schema.createTable("composicaoCorporal", (table) => {
-    table.uuid("id")      // checar se cria automaticamente mesmo ou se precisa de uma funcao especial
+    table.uuid("idTeste")
       .primary()
       .unique()
       .notNullable();
-    table.integer("idTeste").notNullable();
 
     table.float("estatura").notNullable();
     table.float("massaCorporal").notNullable();
@@ -120,11 +119,7 @@ exports.up = function(knex) {
     table.float("quadradoSoma").notNullable();
     table.float("densidade").notNullable();
 
-    table.enum("deficienciaFisica", 
-      ['Cadeirante', 
-        'Ambulante',
-        'Amputado MI'])
-      .notNullable();
+    table.bool("cadeirante").notNullable();
 
     table.float("percentualGordura").notNullable();
     table.float("massaGorda").notNullable();
