@@ -1,16 +1,7 @@
 const CMJModel = require('../models/CMJ');
+const {calcularMedia, calcularDesvioPadrao} = require('../utilities');
 const { v4: uuidv4 } = require('uuid');
 require('dotenv').config();
-
-// Função para calcular a média
-const calcularMedia = (arr) => arr.reduce((acc, val) => acc + val, 0) / arr.length;
-
-// Função para calcular o desvio padrão
-const calcularDesvioPadrao = (arr, mean) => {
-  const squaredDiffs = arr.map(num => Math.pow(num - mean, 2));
-  const meanOfSquaredDiffs = calcularMedia(squaredDiffs);
-  return Math.sqrt(meanOfSquaredDiffs);
-};
 
 module.exports = {
   async create(request, response) {

@@ -1,6 +1,6 @@
 const HooperModel = require('../models/Hooper');
-const UsuarioModel = require('../models/Usuario');
 const TesteModel = require('../models/Teste');
+const {pegaModalidade, calculaIdade} = require('../utilities');
 
 const { v4: uuidv4 } = require('uuid');
 const idTipoTeste = 2;
@@ -17,39 +17,6 @@ Date.prototype.getWeek = function() {
   // Adjust to Thursday in week 1 and count number of weeks from date to week1.
   return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000
                         - 3 + (week1.getDay() + 6) % 7) / 7);
-}
-
-async function calculaIdade(matriculaAtleta){
-  try{
-      let dataNascimento = await UsuarioModel.getDataNascimento(matriculaAtleta);
-      dataNascimento = dataNascimento[0].dataNascimento; // retorna o JSON dentro de um array
-      const dataAtual = new Date();
-      const diferencaEmMilissegundos = dataAtual - dataNascimento;
-      const milissegundosPorAno = 1000 * 60 * 60 * 24 * 365.25; // Considera anos bissextos
-      const diferencaEmAnos = diferencaEmMilissegundos / milissegundosPorAno;
-    
-      const idade = Math.floor(diferencaEmAnos);
-      return(idade);
-  }
-  catch (err) {
-    console.error(`Consulta de data de nascimento falhou: ${err}`);
-    return response.status(500).json({
-      notification: 'Internal server error',
-    });
-  }
-}
-
-async function pegaModalidade(matriculaAtleta){
-  try{
-    const idModalidade = await UsuarioModel.getModalidadeAtleta(matriculaAtleta);
-    return idModalidade[0].modalidade;        // retorna o JSON dentro de uma array
-  }
-  catch (err) {
-    console.error(`Consulta de modalidade falhou: ${err}`);
-    return response.status(500).json({
-      notification: 'Internal server error',
-    });
-  }
 }
 
 module.exports = {
@@ -76,7 +43,6 @@ module.exports = {
       hooper.idTeste = idTeste; 
       hooper.diaDaSemana = data.getDay();   // 0 a 6 
       hooper.semanaDoAno = data.getWeek();  // Padrao ISO-8601
-      console.log(hooper);
 
       await HooperModel.create(hooper);
       return response.status(201).json({ id: hooper.id });
