@@ -1,4 +1,5 @@
-const { celebrate, Segments, Joi } = require('celebrate');
+const { celebrate, Segments, Joi} = require('celebrate');
+// const Joi = require('joi').extend(require('@joi/date'));
 
 module.exports = {
   create: celebrate({
@@ -11,6 +12,13 @@ module.exports = {
       nivelDorMuscular: Joi.number().integer().required(),
       nivelPsr: Joi.number().integer().required(),
       horasSonoNoite: Joi.number().required(),
+    }),
+  }),
+
+  getByDate: celebrate({
+    [Segments.BODY]: Joi.object().keys({
+      dataColetaMin: Joi.string().required(),
+      dataColetaMax: Joi.string().required()
     }),
   }),
 

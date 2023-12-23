@@ -37,7 +37,7 @@ module.exports = {
       teste.idade = await calculaIdade(matriculaAtleta);
 
       const dadosTeste = await TesteModel.create(teste);
-      const dataDaColeta = dadosTeste[0].dataDaColeta;
+      const horaDaColeta = dadosTeste[0].horaDaColeta;
       const data = new Date(horaDaColeta);
 
       // Cria hooper
@@ -46,6 +46,9 @@ module.exports = {
       hooper.diaDaSemana = data.getDay();   // 0 a 6 
       hooper.semanaDoAno = data.getWeek();  // Padrao ISO-
       // O restante dos dados a esta no objeto hooper
+
+      // Cria log
+      
 
       await HooperModel.create(hooper);
       return response.status(201).json({ id: hooper.idTeste, horaDaColeta : horaDaColeta });
