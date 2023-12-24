@@ -5,10 +5,7 @@ exports.up = function(knex) {
       .unique()         
       .notNullable();   
     
-    table.timestamp("horaDaColeta", { useTz: false })   // Nao salva fuso
-      .defaultTo(knex.fn.now())                         // Salva data atual automaticamente
-      .unique()
-      .notNullable(); 
+    table.timestamp("horaDaColeta", { useTz: false }, { precision: 0 }).notNullable();
 
     table.integer("matriculaAtleta").notNullable();
     table.uuid("idModalidade").notNullable();

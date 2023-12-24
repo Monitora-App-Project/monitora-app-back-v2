@@ -31,37 +31,35 @@ module.exports = {
       delete hooper.matriculaAtleta;
       delete hooper.matriculaResponsavel;
       const id = uuidv4(); 
+      const timestamp = new Date();
 
       // Cria teste geral
       const teste = {};               // JSON que guarda os dados do teste geral
       teste.id = id;
+      teste.horaDaColeta = timestamp;
       teste.matriculaAtleta = matriculaAtleta;
       teste.idTipoTeste = idTipoTeste;
       teste.idModalidade = await pegaModalidade(matriculaAtleta);
       teste.idade = await calculaIdade(matriculaAtleta);
-
-      const dadosTeste = await TesteModel.create(teste);
-      const horaDaColeta = dadosTeste[0].horaDaColeta;
-      const data = new Date(horaDaColeta);
+      await TesteModel.create(teste);
 
       // Cria hooper
       hooper.idTeste = id;
-      hooper.diaDaSemana = data.getDay();   // 0 a 6 
-      hooper.semanaDoAno = data.getWeek();  // Padrao ISO-
+      hooper.diaDaSemana = timestamp.getDay();   // 0 a 6 
+      hooper.semanaDoAno = timestamp.getWeek();  // Padrao ISO-
       await HooperModel.create(hooper);     // O restante dos dados a esta no objeto hooper
 
       // Cria log de Create
       const log = {};                // JSON que guarda os dados a serem inseridos no log
       log.id = uuidv4();
       log.responsavel = matriculaResponsavel;  
-      const data2 = new Date();
-      log.data = data2;          
+      log.data = timestamp;          
       log.nomeTabela = "Hooper";
       log.tabelaId = id;             
       log.tipoAlteracao = "Create";
       await LogsModel.create(log); 
 
-      return response.status(201).json({ id: hooper.idTeste, horaDaColeta : horaDaColeta });
+      return response.status(201).json({ id: hooper.idTeste, horaDaColeta : timestamp });
     } catch (err) {
       console.error(`Hooper creation failed: ${err}`);
       return response.status(500).json({

@@ -2,7 +2,7 @@ exports.up = function(knex) {
   return knex.schema.createTable("logs", (table) => {
     table.uuid("id").primary().unique().notNullable();
     table.integer("responsavel").notNullable();
-    table.date("data").notNullable();
+    table.timestamp("data", { useTz: false }, { precision: 0 }).notNullable();
     table.string("nomeTabela").notNullable();
     table.string("tabelaId").notNullable();
     table.enum("tipoAlteracao", ["Create", "Delete", "Update"]).notNullable();

@@ -10,16 +10,15 @@ module.exports = {
     try {
       const teste = request.body;                         // Daqui vem matricula do atleta e tipo do teste    
       const matriculaAtleta = teste.matriculaAtleta;      
+      const timestamp = new Date();
 
-      // horaDaColeta -> gerado pelo do banco
       const id = uuidv4() 
       teste.id = id;
+      teste.horaDaColeta = timestamp;
       teste.idModalidade = await pegaModalidade(matriculaAtleta);
       teste.idade = await calculaIdade(matriculaAtleta); 
 
-      const dadosTeste = await TesteModel.create(teste);
-      const horaDaColeta = dadosTeste[0].horaDaColeta;
-      
+      await TesteModel.create(teste);
       return response.status(201).json({horaDaColeta, id});
     } catch (err) {
       console.error(`Teste creation failed: ${err}`);
