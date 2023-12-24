@@ -1,5 +1,6 @@
 const HooperModel = require('../models/Hooper');
 const TesteModel = require('../models/Teste');
+const LogsModel = require('../models/Logs');
 
 const {pegaModalidade, calculaIdade} = require('../utilities');
 const { v4: uuidv4 } = require('uuid');
@@ -25,11 +26,14 @@ module.exports = {
   async create(request, response) {
     try {
       const hooper = request.body;      // Chegam dados do teste geral e do hooper
-      const teste = {};               // JSON que guarda os dados do teste geral
       const matriculaAtleta = hooper.matriculaAtleta;
+      const matriculaResponsavel = hooper.matriculaResponsavel;
+      delete hooper.matriculaAtleta;
+      delete hooper.matriculaResponsavel;
       const id = uuidv4(); 
 
       // Cria teste geral
+      const teste = {};               // JSON que guarda os dados do teste geral
       teste.id = id;
       teste.matriculaAtleta = matriculaAtleta;
       teste.idTipoTeste = idTipoTeste;
@@ -41,16 +45,22 @@ module.exports = {
       const data = new Date(horaDaColeta);
 
       // Cria hooper
-      delete hooper.matriculaAtleta;
       hooper.idTeste = id;
       hooper.diaDaSemana = data.getDay();   // 0 a 6 
       hooper.semanaDoAno = data.getWeek();  // Padrao ISO-
-      // O restante dos dados a esta no objeto hooper
+      await HooperModel.create(hooper);     // O restante dos dados a esta no objeto hooper
 
-      // Cria log
-      
+      // Cria log de Create
+      const log = {};                // JSON que guarda os dados a serem inseridos no log
+      log.id = uuidv4();
+      log.responsavel = matriculaResponsavel;  
+      const data2 = new Date();
+      log.data = data2;          
+      log.nomeTabela = "Hooper";
+      log.tabelaId = id;             
+      log.tipoAlteracao = "Create";
+      await LogsModel.create(log); 
 
-      await HooperModel.create(hooper);
       return response.status(201).json({ id: hooper.idTeste, horaDaColeta : horaDaColeta });
     } catch (err) {
       console.error(`Hooper creation failed: ${err}`);

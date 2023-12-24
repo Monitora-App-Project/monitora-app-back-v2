@@ -5,6 +5,7 @@ module.exports = {
   create: celebrate({
     [Segments.BODY]: Joi.object().keys({
       matriculaAtleta: Joi.number().integer().required(),
+      matriculaResponsavel: Joi.number().integer().required(),
       
       nivelSono: Joi.number().integer().required(),
       nivelStress: Joi.number().integer().required(),
