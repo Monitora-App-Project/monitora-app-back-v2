@@ -5,7 +5,7 @@ module.exports = {
   create: celebrate({
     [Segments.BODY]: Joi.object().keys({
       matriculaAtleta: Joi.number().integer().required(),
-      matriculaResponsavel: Joi.number().integer().required(),
+      responsavel: Joi.number().integer().required(),
       
       nivelSono: Joi.number().integer().required(),
       nivelStress: Joi.number().integer().required(),
@@ -34,6 +34,9 @@ module.exports = {
       idTeste: Joi.string().guid({version: 'uuidv4'}).required(),
     }),
     [Segments.BODY]: Joi.object().keys({
+      responsavel: Joi.number().integer().required(),
+      motivo : Joi.string().required(),
+
       nivelSono: Joi.number().integer().optional(),
       nivelStress: Joi.number().integer().optional(),
       nivelFadiga: Joi.number().integer().optional(),
@@ -46,6 +49,11 @@ module.exports = {
   delete: celebrate({
     [Segments.PARAMS]: Joi.object().keys({
       idTeste: Joi.string().guid({version: 'uuidv4'}).required(),
+    }),
+
+    [Segments.BODY]: Joi.object().keys({
+      responsavel: Joi.number().integer().required(),
+      motivo : Joi.string().required()
     }),
   }),
 };

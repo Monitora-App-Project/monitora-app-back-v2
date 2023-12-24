@@ -27,9 +27,9 @@ module.exports = {
     try {
       const hooper = request.body;      // Chegam dados do teste geral e do hooper
       const matriculaAtleta = hooper.matriculaAtleta;
-      const matriculaResponsavel = hooper.matriculaResponsavel;
+      const responsavel = hooper.responsavel;
       delete hooper.matriculaAtleta;
-      delete hooper.matriculaResponsavel;
+      delete hooper.responsavel;
       const id = uuidv4(); 
       const timestamp = new Date();
 
@@ -52,7 +52,7 @@ module.exports = {
       // Cria log de Create
       const log = {};                // JSON que guarda os dados a serem inseridos no log
       log.id = uuidv4();
-      log.responsavel = matriculaResponsavel;  
+      log.responsavel = responsavel;  
       log.data = timestamp;          
       log.nomeTabela = "Hooper";
       log.tabelaId = id;             
@@ -122,11 +122,43 @@ module.exports = {
   async update(request, response) {
     try {
       const { idTeste } = request.params;
-      const hooper = request.body;
-      const stillExistFieldsToUpdate = Object.values(hooper).length > 0;
+      const hooperUpdate = request.body;
+
+      // Seta valores do log
+      const responsavel = hooperUpdate.responsavel;
+      const motivo = hooperUpdate.motivo;
+      delete hooperUpdate.responsavel;
+      delete hooperUpdate.motivo;
+      const timestamp = new Date();
+      const atributos = Object.keys(hooperUpdate);
+      const valoresNovos = Object.values(hooperUpdate);
+
+      const hooperAtual = await HooperModel.getByTeste(idTeste);
+      const valoresAntigos = Object.fromEntries(
+        atributos.map(chave => [chave, hooperAtual[0][chave]])
+      );
+      const valoresAntigosValues = Object.values(valoresAntigos);
+
+      // Da o Update
+      const stillExistFieldsToUpdate = Object.values(hooperUpdate).length > 0;
       if (stillExistFieldsToUpdate) {
-        await HooperModel.updateByTeste(idTeste, hooper);
+        await HooperModel.updateByTeste(idTeste, hooperUpdate);
       }
+
+      // Cria log 
+      const log = {};          
+      log.id = uuidv4();
+      log.responsavel = responsavel;
+      log.data = timestamp;          
+      log.nomeTabela = "Hooper";
+      log.tabelaId = idTeste;             
+      log.tipoAlteracao = "Update";
+      log.atributo = atributos.join(',');
+      log.valorAntigo = valoresAntigosValues.join(',');
+      log.novoValor = valoresNovos.join(',');
+      log.motivo = motivo;
+      await LogsModel.create(log);
+      
       return response.status(200).json('OK');
     } catch (err) {
       console.error(`Hooper update failed: ${err}`);
@@ -139,8 +171,24 @@ module.exports = {
   async delete(request, response) {
     try {
       const { idTeste } = request.params;
+      const hooperDelete = request.body;
+      const responsavel = hooperDelete.responsavel;
+      const motivo = hooperDelete.motivo;
+      const timestamp = new Date();
+
+      // Cria log 
+      const log = {};          
+      log.id = uuidv4();
+      log.responsavel = responsavel;
+      log.data = timestamp;          
+      log.nomeTabela = "Hooper";
+      log.tabelaId = idTeste;             
+      log.tipoAlteracao = "Delete";
+      log.motivo = motivo;
+     
       await HooperModel.deleteByTeste(idTeste);
       await TesteModel.deleteById(idTeste);
+      await LogsModel.create(log);
       return response.status(200).json("OK");
     } catch (err) {
       console.error(`Hooper delete failed: ${err}`);

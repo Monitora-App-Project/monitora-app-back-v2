@@ -5,4 +5,10 @@ module.exports = {
     const result = await connection('logs').insert(log);
     return result;
   },
+
+  async getAll() {
+    const result = await connection('logs')
+    .select('*')
+    return result;
+  },
 }
