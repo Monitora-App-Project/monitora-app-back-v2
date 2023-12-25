@@ -2,8 +2,9 @@ const express = require('express');
 
 const pseAtletaRouter = express.Router();
 
-const PseAtletaController = require('../../controllers/PSEAtleta');
-const PseAtletaValidator = require('../../validators/PSEAtleta');
+const PseAtletaController = require('../../controllers/PseAtleta');
+const PseAtletaValidator = require('../../validators/PseAtleta');
+
 // const auth = require('../../middlewares/authentication');
 
 pseAtletaRouter.post(

@@ -9,6 +9,8 @@ const testeRoutes = require('./teste');
 const logsRoutes = require('./logs');
 const cmjRoutes = require('./cmj');
 const hooperRoutes = require('./hooper');
+const pseAtletaRoutes = require('./pseAtleta');
+const pseTreinadorRoutes = require('./pseTreinador');
 
 const routes = express.Router();
 
@@ -21,5 +23,7 @@ routes.use('/teste', testeRoutes);
 routes.use('/logs', logsRoutes);
 routes.use('/cmj', cmjRoutes);
 routes.use('/hooper', hooperRoutes);
+routes.use('/pseatleta', pseAtletaRoutes);
+routes.use('/psetreinador', pseTreinadorRoutes);
 
 module.exports = routes;

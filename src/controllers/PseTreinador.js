@@ -1,4 +1,4 @@
-const PseAtletaModel = require('../models/PseAtleta');
+const PseTreinadorModel = require('../models/PseTreinador');
 const TesteModel = require('../models/Teste');
 const LogsModel = require('../models/Logs');
 
@@ -7,7 +7,7 @@ const { v4: uuidv4 } = require('uuid');
 
 require('dotenv').config();
 
-const idTipoTeste = 3;
+const idTipoTeste = 4;
 
 // Returns the ISO week of the date.
 Date.prototype.getWeek = function() {
@@ -26,11 +26,11 @@ module.exports = {
   async create(request, response) {
     try {
       // Salva informacoes gerais
-      const pseAtleta = request.body; 
-      const matriculaAtleta = pseAtleta.matriculaAtleta;
-      const responsavel = pseAtleta.responsavel;
-      delete pseAtleta.matriculaAtleta;
-      delete pseAtleta.responsavel;
+      const pseTreinador = request.body; 
+      const matriculaAtleta = pseTreinador.matriculaAtleta;
+      const responsavel = pseTreinador.responsavel;
+      delete pseTreinador.matriculaAtleta;
+      delete pseTreinador.responsavel;
       const id = uuidv4(); 
       const timestamp = new Date();
 
@@ -44,25 +44,25 @@ module.exports = {
       teste.idade = await calculaIdade(matriculaAtleta);
       await TesteModel.create(teste);
 
-      // Cria pseAtleta
-      pseAtleta.idTeste = id;
-      pseAtleta.diaDaSemana = timestamp.getDay();   // 0 a 6 
-      pseAtleta.semanaDoAno = timestamp.getWeek();  // Padrao ISO-
-      await PseAtletaModel.create(pseAtleta);     
+      // Cria pseTreinador
+      pseTreinador.idTeste = id;
+      pseTreinador.diaDaSemana = timestamp.getDay();   // 0 a 6 
+      pseTreinador.semanaDoAno = timestamp.getWeek();  // Padrao ISO-
+      await PseTreinadorModel.create(pseTreinador);     
 
       // Cria log de Create
       const log = {};                // JSON que guarda os dados a serem inseridos no log
       log.id = uuidv4();
       log.responsavel = responsavel;  
       log.data = timestamp;          
-      log.nomeTabela = "pseAtleta";
+      log.nomeTabela = "pseTreinador";
       log.tabelaId = id;             
       log.tipoAlteracao = "Create";
       await LogsModel.create(log); 
 
-      return response.status(201).json({ id: pseAtleta.idTeste, horaDaColeta : timestamp });
+      return response.status(201).json({ id: pseTreinador.idTeste, horaDaColeta : timestamp });
     } catch (err) {
-      console.error(`PSEAtleta creation failed: ${err}`);
+      console.error(`PSETreinador creation failed: ${err}`);
       return response.status(500).json({
         notification: 'Internal server error',
       });
@@ -71,10 +71,10 @@ module.exports = {
 
   async getAll(request, response) {
     try {
-      const result = await PseAtletaModel.getAll();
+      const result = await PseTreinadorModel.getAll();
       return response.status(200).json(result);
     } catch (err) {
-      console.error(`PSEAtleta getAll failed: ${err}`);
+      console.error(`PSETreinador getAll failed: ${err}`);
       return response.status(500).json({
         notification: 'Internal server error',
       });
@@ -84,10 +84,10 @@ module.exports = {
   async getByFields(request, response) {
     try {
       const fields = request.body;
-      const result = await PseAtletaModel.getByFields(fields);
+      const result = await PseTreinadorModel.getByFields(fields);
       return response.status(200).json(result);
     } catch (err) {
-      console.error(`PSEAtleta getByFields failed: ${err}`);
+      console.error(`PSETreinador getByFields failed: ${err}`);
       return response.status(500).json({
         notification: 'Internal server error',
       });
@@ -97,10 +97,10 @@ module.exports = {
   async getByTeste(request, response) {
     try {
       const { idTeste } = request.params;
-      const result = await PseAtletaModel.getByTeste(idTeste);
+      const result = await PseTreinadorModel.getByTeste(idTeste);
       return response.status(200).json(result);
     } catch (err) {
-      console.error(`PSEAtleta getByTeste failed: ${err}`);
+      console.error(`PSETreinador getByTeste failed: ${err}`);
       return response.status(500).json({
         notification: 'Internal server error',
       });
@@ -110,10 +110,10 @@ module.exports = {
   async getByDate(request, response) {
     try {
       const fields = request.body;
-      const result = await PseAtletaModel.getByDate(fields);
+      const result = await PseTreinadorModel.getByDate(fields);
       return response.status(200).json(result);
     } catch (err) {
-      console.error(`PSEAtleta getByDate failed: ${err}`);
+      console.error(`PSETreinador getByDate failed: ${err}`);
       return response.status(500).json({
         notification: 'Internal server error',
       });
@@ -123,27 +123,27 @@ module.exports = {
   async update(request, response) {
     try {
       const { idTeste } = request.params;
-      const pseAtletaUpdate = request.body;
+      const pseTreinadorUpdate = request.body;
 
       // Seta valores do log
-      const responsavel = pseAtletaUpdate.responsavel;
-      const motivo = pseAtletaUpdate.motivo;
-      delete pseAtletaUpdate.responsavel;
-      delete pseAtletaUpdate.motivo;
+      const responsavel = pseTreinadorUpdate.responsavel;
+      const motivo = pseTreinadorUpdate.motivo;
+      delete pseTreinadorUpdate.responsavel;
+      delete pseTreinadorUpdate.motivo;
       const timestamp = new Date();
-      const atributos = Object.keys(pseAtletaUpdate);
-      const valoresNovos = Object.values(pseAtletaUpdate);
+      const atributos = Object.keys(pseTreinadorUpdate);
+      const valoresNovos = Object.values(pseTreinadorUpdate);
 
-      const pseAtletaAtual = await PseAtletaModel.getByTeste(idTeste);
+      const pseTreinadorAtual = await PseTreinadorModel.getByTeste(idTeste);
       const valoresAntigos = Object.fromEntries(
-        atributos.map(chave => [chave, pseAtletaAtual[0][chave]])
+        atributos.map(chave => [chave, pseTreinadorAtual[0][chave]])
       );
       const valoresAntigosValues = Object.values(valoresAntigos);
 
       // Da o Update
-      const stillExistFieldsToUpdate = Object.values(pseAtletaUpdate).length > 0;
+      const stillExistFieldsToUpdate = Object.values(pseTreinadorUpdate).length > 0;
       if (stillExistFieldsToUpdate) {
-        await PseAtletaModel.updateByTeste(idTeste, pseAtletaUpdate);
+        await PseTreinadorModel.updateByTeste(idTeste, pseTreinadorUpdate);
       }
 
       // Cria log 
@@ -151,7 +151,7 @@ module.exports = {
       log.id = uuidv4();
       log.responsavel = responsavel;
       log.data = timestamp;          
-      log.nomeTabela = "pseAtleta";
+      log.nomeTabela = "pseTreinador";
       log.tabelaId = idTeste;             
       log.tipoAlteracao = "Update";
       log.atributo = atributos.join(',');
@@ -162,7 +162,7 @@ module.exports = {
       
       return response.status(200).json('OK');
     } catch (err) {
-      console.error(`PSEAtleta update failed: ${err}`);
+      console.error(`PSETreinador update failed: ${err}`);
       return response.status(500).json({
         notification: 'Internal server error',
       });
@@ -172,9 +172,9 @@ module.exports = {
   async delete(request, response) {
     try {
       const { idTeste } = request.params;
-      const pseAtletaDelete = request.body;
-      const responsavel = pseAtletaDelete.responsavel;
-      const motivo = pseAtletaDelete.motivo;
+      const pseTreinadorDelete = request.body;
+      const responsavel = pseTreinadorDelete.responsavel;
+      const motivo = pseTreinadorDelete.motivo;
       const timestamp = new Date();
 
       // Cria log 
@@ -182,17 +182,17 @@ module.exports = {
       log.id = uuidv4();
       log.responsavel = responsavel;
       log.data = timestamp;          
-      log.nomeTabela = "pseAtleta";
+      log.nomeTabela = "pseTreinador";
       log.tabelaId = idTeste;             
       log.tipoAlteracao = "Delete";
       log.motivo = motivo;
      
-      await PseAtletaModel.deleteByTeste(idTeste);
+      await PseTreinadorModel.deleteByTeste(idTeste);
       await TesteModel.deleteById(idTeste);
       await LogsModel.create(log);
       return response.status(200).json("OK");
     } catch (err) {
-      console.error(`PSEAtleta delete failed: ${err}`);
+      console.error(`PSETreinador delete failed: ${err}`);
       return response.status(500).json({
         notification: 'Internal server error',
       });
