@@ -11,6 +11,7 @@ const cmjRoutes = require('./cmj');
 const hooperRoutes = require('./hooper');
 const pseAtletaRoutes = require('./pseAtleta');
 const pseTreinadorRoutes = require('./pseTreinador');
+const vfcRoutes = require('./vfc');
 
 const routes = express.Router();
 
@@ -25,5 +26,6 @@ routes.use('/cmj', cmjRoutes);
 routes.use('/hooper', hooperRoutes);
 routes.use('/pseatleta', pseAtletaRoutes);
 routes.use('/psetreinador', pseTreinadorRoutes);
+routes.use('/vfc', vfcRoutes);
 
 module.exports = routes;
