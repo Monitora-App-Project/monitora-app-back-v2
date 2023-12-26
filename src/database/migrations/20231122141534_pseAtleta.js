@@ -1,17 +1,16 @@
 exports.up = function(knex) {
   return knex.schema.createTable("pseAtleta", (table) => {
-    table.uuid("id")      // checar se cria automaticamente mesmo ou se precisa de uma funcao especial
+    table.uuid("idTeste")      
       .primary()
       .unique()
       .notNullable();
-    table.integer("idTeste").notNullable();
     
-    table.tinyint("pseAtleta").notNullable();         // Fiz como tiny int pois esse tipo aceita de 0 a 255 (e eh suficiente para esses dados)
+    table.tinyint("pseAtleta").notNullable();        
     table.integer("pseSessao").notNullable();
 
-    table.time("duracaoTreino").notNullable();
+    table.float("duracaoTreino").notNullable();
 
-    table.integer("diaDaSemana").notNullable();     // Calculados a partir de teste.dataDaColeta
+    table.integer("diaDaSemana").notNullable();     
     table.integer("semanaDoAno").notNullable();
     
     table.foreign("idTeste")

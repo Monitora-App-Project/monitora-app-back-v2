@@ -6,13 +6,10 @@ module.exports = {
     [Segments.BODY]: Joi.object().keys({
       matriculaAtleta: Joi.number().integer().required(),
       responsavel: Joi.number().integer().required(),
-      
-      nivelSono: Joi.number().integer().required(),
-      nivelStress: Joi.number().integer().required(),
-      nivelFadiga: Joi.number().integer().required(),
-      nivelDorMuscular: Joi.number().integer().required(),
-      nivelPsr: Joi.number().integer().required(),
-      horasSonoNoite: Joi.number().required(),
+    
+      pseAtleta: Joi.number().integer().required(),
+      pseSessao: Joi.number().integer().required(),
+      duracaoTreino: Joi.number().required()
     }),
   }),
 
@@ -37,12 +34,9 @@ module.exports = {
       responsavel: Joi.number().integer().required(),
       motivo : Joi.string().required(),
 
-      nivelSono: Joi.number().integer().optional(),
-      nivelStress: Joi.number().integer().optional(),
-      nivelFadiga: Joi.number().integer().optional(),
-      nivelDorMuscular: Joi.number().integer().optional(),
-      nivelPsr: Joi.number().integer().optional(),
-      horasSonoNoite: Joi.number().optional(),
+      pseAtleta: Joi.number().integer().optional(),
+      pseSessao: Joi.number().integer().optional(),
+      duracaoTreino: Joi.number().optional()
     }),
   }),
 

@@ -1,10 +1,9 @@
 exports.up = function(knex) {
   return knex.schema.createTable("pseTreinador", (table) => {
-    table.uuid("id")      // checar se cria automaticamente mesmo ou se precisa de uma funcao especial
+    table.uuid("idTeste")     
       .primary()
       .unique()
       .notNullable();
-    table.integer("idTeste").notNullable();
     
     table.tinyint("pseTreinador").notNullable();         // Vira int2
     table.enu("tipoTreino", 

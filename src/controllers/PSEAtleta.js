@@ -1,4 +1,4 @@
-const HooperModel = require('../models/Hooper');
+const PseAtletaModel = require('../models/PseAtleta');
 const TesteModel = require('../models/Teste');
 const LogsModel = require('../models/Logs');
 
@@ -7,7 +7,7 @@ const { v4: uuidv4 } = require('uuid');
 
 require('dotenv').config();
 
-const idTipoTeste = 2;
+const idTipoTeste = 3;
 
 // Returns the ISO week of the date.
 Date.prototype.getWeek = function() {
@@ -25,11 +25,12 @@ Date.prototype.getWeek = function() {
 module.exports = {
   async create(request, response) {
     try {
-      const hooper = request.body;      // Chegam dados do teste geral e do hooper
-      const matriculaAtleta = hooper.matriculaAtleta;
-      const responsavel = hooper.responsavel;
-      delete hooper.matriculaAtleta;
-      delete hooper.responsavel;
+      // Salva informacoes gerais
+      const pseAtleta = request.body; 
+      const matriculaAtleta = pseAtleta.matriculaAtleta;
+      const responsavel = pseAtleta.responsavel;
+      delete pseAtleta.matriculaAtleta;
+      delete pseAtleta.responsavel;
       const id = uuidv4(); 
       const timestamp = new Date();
 
@@ -43,25 +44,25 @@ module.exports = {
       teste.idade = await calculaIdade(matriculaAtleta);
       await TesteModel.create(teste);
 
-      // Cria hooper
-      hooper.idTeste = id;
-      hooper.diaDaSemana = timestamp.getDay();   // 0 a 6 
-      hooper.semanaDoAno = timestamp.getWeek();  // Padrao ISO-
-      await HooperModel.create(hooper);     // O restante dos dados a esta no objeto hooper
+      // Cria pseAtleta
+      pseAtleta.idTeste = id;
+      pseAtleta.diaDaSemana = timestamp.getDay();   // 0 a 6 
+      pseAtleta.semanaDoAno = timestamp.getWeek();  // Padrao ISO-
+      await PseAtletaModel.create(pseAtleta);     
 
       // Cria log de Create
       const log = {};                // JSON que guarda os dados a serem inseridos no log
       log.id = uuidv4();
       log.responsavel = responsavel;  
       log.data = timestamp;          
-      log.nomeTabela = "hooper";
+      log.nomeTabela = "pseAtleta";
       log.tabelaId = id;             
       log.tipoAlteracao = "Create";
       await LogsModel.create(log); 
 
-      return response.status(201).json({ id: hooper.idTeste, horaDaColeta : timestamp });
+      return response.status(201).json({ id: pseAtleta.idTeste, horaDaColeta : timestamp });
     } catch (err) {
-      console.error(`Hooper creation failed: ${err}`);
+      console.error(`PSEAtleta creation failed: ${err}`);
       return response.status(500).json({
         notification: 'Internal server error',
       });
@@ -70,10 +71,10 @@ module.exports = {
 
   async getAll(request, response) {
     try {
-      const result = await HooperModel.getAll();
+      const result = await PseAtletaModel.getAll();
       return response.status(200).json(result);
     } catch (err) {
-      console.error(`CMJ getAll failed: ${err}`);
+      console.error(`PSEAtleta getAll failed: ${err}`);
       return response.status(500).json({
         notification: 'Internal server error',
       });
@@ -83,10 +84,10 @@ module.exports = {
   async getByFields(request, response) {
     try {
       const fields = request.body;
-      const result = await HooperModel.getByFields(fields);
+      const result = await PseAtletaModel.getByFields(fields);
       return response.status(200).json(result);
     } catch (err) {
-      console.error(`Hooper getByFields failed: ${err}`);
+      console.error(`PSEAtleta getByFields failed: ${err}`);
       return response.status(500).json({
         notification: 'Internal server error',
       });
@@ -96,10 +97,10 @@ module.exports = {
   async getByTeste(request, response) {
     try {
       const { idTeste } = request.params;
-      const result = await HooperModel.getByTeste(idTeste);
+      const result = await PseAtletaModel.getByTeste(idTeste);
       return response.status(200).json(result);
     } catch (err) {
-      console.error(`Hooper getByTeste failed: ${err}`);
+      console.error(`PSEAtleta getByTeste failed: ${err}`);
       return response.status(500).json({
         notification: 'Internal server error',
       });
@@ -109,10 +110,10 @@ module.exports = {
   async getByDate(request, response) {
     try {
       const fields = request.body;
-      const result = await HooperModel.getByDate(fields);
+      const result = await PseAtletaModel.getByDate(fields);
       return response.status(200).json(result);
     } catch (err) {
-      console.error(`Hooper getByDate failed: ${err}`);
+      console.error(`PSEAtleta getByDate failed: ${err}`);
       return response.status(500).json({
         notification: 'Internal server error',
       });
@@ -122,27 +123,27 @@ module.exports = {
   async update(request, response) {
     try {
       const { idTeste } = request.params;
-      const hooperUpdate = request.body;
+      const pseAtletaUpdate = request.body;
 
       // Seta valores do log
-      const responsavel = hooperUpdate.responsavel;
-      const motivo = hooperUpdate.motivo;
-      delete hooperUpdate.responsavel;
-      delete hooperUpdate.motivo;
+      const responsavel = pseAtletaUpdate.responsavel;
+      const motivo = pseAtletaUpdate.motivo;
+      delete pseAtletaUpdate.responsavel;
+      delete pseAtletaUpdate.motivo;
       const timestamp = new Date();
-      const atributos = Object.keys(hooperUpdate);
-      const valoresNovos = Object.values(hooperUpdate);
+      const atributos = Object.keys(pseAtletaUpdate);
+      const valoresNovos = Object.values(pseAtletaUpdate);
 
-      const hooperAtual = await HooperModel.getByTeste(idTeste);
+      const pseAtletaAtual = await PseAtletaModel.getByTeste(idTeste);
       const valoresAntigos = Object.fromEntries(
-        atributos.map(chave => [chave, hooperAtual[0][chave]])
+        atributos.map(chave => [chave, pseAtletaAtual[0][chave]])
       );
       const valoresAntigosValues = Object.values(valoresAntigos);
 
       // Da o Update
-      const stillExistFieldsToUpdate = Object.values(hooperUpdate).length > 0;
+      const stillExistFieldsToUpdate = Object.values(pseAtletaUpdate).length > 0;
       if (stillExistFieldsToUpdate) {
-        await HooperModel.updateByTeste(idTeste, hooperUpdate);
+        await PseAtletaModel.updateByTeste(idTeste, pseAtletaUpdate);
       }
 
       // Cria log 
@@ -150,7 +151,7 @@ module.exports = {
       log.id = uuidv4();
       log.responsavel = responsavel;
       log.data = timestamp;          
-      log.nomeTabela = "hooper";
+      log.nomeTabela = "pseAtleta";
       log.tabelaId = idTeste;             
       log.tipoAlteracao = "Update";
       log.atributo = atributos.join(',');
@@ -161,7 +162,7 @@ module.exports = {
       
       return response.status(200).json('OK');
     } catch (err) {
-      console.error(`Hooper update failed: ${err}`);
+      console.error(`PSEAtleta update failed: ${err}`);
       return response.status(500).json({
         notification: 'Internal server error',
       });
@@ -171,9 +172,9 @@ module.exports = {
   async delete(request, response) {
     try {
       const { idTeste } = request.params;
-      const hooperDelete = request.body;
-      const responsavel = hooperDelete.responsavel;
-      const motivo = hooperDelete.motivo;
+      const pseAtletaDelete = request.body;
+      const responsavel = pseAtletaDelete.responsavel;
+      const motivo = pseAtletaDelete.motivo;
       const timestamp = new Date();
 
       // Cria log 
@@ -181,17 +182,17 @@ module.exports = {
       log.id = uuidv4();
       log.responsavel = responsavel;
       log.data = timestamp;          
-      log.nomeTabela = "hooper";
+      log.nomeTabela = "pseAtleta";
       log.tabelaId = idTeste;             
       log.tipoAlteracao = "Delete";
       log.motivo = motivo;
      
-      await HooperModel.deleteByTeste(idTeste);
+      await PseAtletaModel.deleteByTeste(idTeste);
       await TesteModel.deleteById(idTeste);
       await LogsModel.create(log);
       return response.status(200).json("OK");
     } catch (err) {
-      console.error(`Hooper delete failed: ${err}`);
+      console.error(`PSEAtleta delete failed: ${err}`);
       return response.status(500).json({
         notification: 'Internal server error',
       });

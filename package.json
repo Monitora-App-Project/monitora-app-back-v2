@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/Monitora-App-Project/monitora-app-back-v2#readme",
   "dependencies": {
+    "@joi/date": "^2.1.0",
     "celebrate": "^15.0.3",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",

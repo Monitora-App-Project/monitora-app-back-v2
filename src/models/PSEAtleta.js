@@ -1,52 +1,52 @@
 const connection = require('../database/connection');
 
 module.exports = {
-  async create(hooper) {
-    const result = await connection('hooper').insert(hooper);
+  async create(pseAtleta) {
+    const result = await connection('pseAtleta').insert(pseAtleta);
     return result;
   },
 
   async getAll() {
-    const result = await connection('hooper')
+    const result = await connection('pseAtleta')
     .select(
-      'hooper.*',
+      'pseAtleta.*',
       'teste.horaDaColeta',
       'teste.matriculaAtleta',
       'teste.idModalidade',
       'teste.idTipoTeste',
       'teste.idade',
     )
-    .innerJoin('teste', 'hooper.idTeste', 'teste.id');
+    .innerJoin('teste', 'pseAtleta.idTeste', 'teste.id');
     return result;
   },
 
   async getByTeste(idTeste) {
-    const result = await connection('hooper')
+    const result = await connection('pseAtleta')
       .select(
-        'hooper.*',
+        'pseAtleta.*',
         'teste.horaDaColeta',
         'teste.matriculaAtleta',
         'teste.idModalidade',
         'teste.idTipoTeste',
         'teste.idade',
       )
-      .innerJoin('teste', 'hooper.idTeste', 'teste.id')
+      .innerJoin('teste', 'pseAtleta.idTeste', 'teste.id')
       .where({ idTeste });
     return result;
   },
   
   async getByFields(fields) {
-    const result = await connection('hooper')
-    .select('hooper.*', 'teste.*')
-    .innerJoin('teste', 'hooper.idTeste', 'teste.id')
+    const result = await connection('pseAtleta')
+    .select('pseAtleta.*', 'teste.*')
+    .innerJoin('teste', 'pseAtleta.idTeste', 'teste.id')
     .where(fields);
     return result;
   },
 
   async getByDate(fields) {
-    const result = await connection('hooper')
-    .select('hooper.*', 'teste.*')
-    .innerJoin('teste', 'hooper.idTeste', 'teste.id')
+    const result = await connection('pseAtleta')
+    .select('pseAtleta.*', 'teste.*')
+    .innerJoin('teste', 'pseAtleta.idTeste', 'teste.id')
     .where(builder => {
       if (fields.dataColetaMin && fields.dataColetaMax) {
         builder.whereBetween('horaDaColeta', [fields.dataColetaMin, fields.dataColetaMax]);
@@ -56,15 +56,15 @@ module.exports = {
     return result;
   },
 
-  async updateByTeste(idTeste, hooper) {
-    const result = await connection('hooper')
+  async updateByTeste(idTeste, pseAtleta) {
+    const result = await connection('pseAtleta')
       .where({ idTeste })
-      .update(hooper);
+      .update(pseAtleta);
     return result;
   },
 
   async deleteByTeste(idTeste) {
-    const result = await connection('hooper').where({ idTeste }).delete();
+    const result = await connection('pseAtleta').where({ idTeste }).delete();
     return result;
   },  
 };

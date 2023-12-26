@@ -1,10 +1,9 @@
 exports.up = function(knex) {
   return knex.schema.createTable("hooper", (table) => {
-    table.uuid("id")      // checar se cria automaticamente mesmo ou se precisa de uma funcao especial
+    table.uuid("idTeste")      
       .primary()
       .unique()
       .notNullable();
-    table.integer("idTeste").notNullable();
     
     table.tinyint("nivelSono").notNullable();         // Fiz como tiny int pois esse tipo aceita de 0 a 255 (e eh suficiente para esses dados)
     table.tinyint("nivelStress").notNullable();

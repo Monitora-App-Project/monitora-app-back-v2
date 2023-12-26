@@ -1,10 +1,9 @@
 exports.up = function(knex) {
   return knex.schema.createTable("arremesso", (table) => {
-    table.uuid("id")      
+    table.uuid("idTeste")      
       .primary()
       .unique()
       .notNullable();
-    table.integer("idTeste").notNullable();
     
     table.float("arremesso1").notNullable();
     table.float("arremesso2").notNullable();

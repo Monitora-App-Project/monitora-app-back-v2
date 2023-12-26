@@ -6,13 +6,20 @@ module.exports = {
     [Segments.BODY]: Joi.object().keys({
       matriculaAtleta: Joi.number().integer().required(),
       responsavel: Joi.number().integer().required(),
-      
-      nivelSono: Joi.number().integer().required(),
-      nivelStress: Joi.number().integer().required(),
-      nivelFadiga: Joi.number().integer().required(),
-      nivelDorMuscular: Joi.number().integer().required(),
-      nivelPsr: Joi.number().integer().required(),
-      horasSonoNoite: Joi.number().required(),
+    
+      rmssd: Joi.number().required(),
+      sdnn: Joi.number().required(),
+      lnRmssd: Joi.number().required(),
+      pnn50: Joi.number().required(),
+      meanRrInterval: Joi.number().required(),
+      totalPower: Joi.number().required(),
+      lfHfRatio: Joi.number().required(),
+      lfPower: Joi.number().required(),
+      hfPower: Joi.number().required(),
+      lfPeak: Joi.number().required(),
+      hfPeak: Joi.number().required(),
+      hr: Joi.number().required(),
+      obsVfc: Joi.string().optional()
     }),
   }),
 
@@ -36,13 +43,20 @@ module.exports = {
     [Segments.BODY]: Joi.object().keys({
       responsavel: Joi.number().integer().required(),
       motivo : Joi.string().required(),
-
-      nivelSono: Joi.number().integer().optional(),
-      nivelStress: Joi.number().integer().optional(),
-      nivelFadiga: Joi.number().integer().optional(),
-      nivelDorMuscular: Joi.number().integer().optional(),
-      nivelPsr: Joi.number().integer().optional(),
-      horasSonoNoite: Joi.number().optional(),
+      
+      rmssd: Joi.number().optional(),
+      sdnn: Joi.number().optional(),
+      lnRmssd: Joi.number().optional(),
+      pnn50: Joi.number().optional(),
+      meanRrInterval: Joi.number().optional(),
+      totalPower: Joi.number().optional(),
+      lfHfRatio: Joi.number().optional(),
+      lfPower: Joi.number().optional(),
+      hfPower: Joi.number().optional(),
+      lfPeak: Joi.number().optional(),
+      hfPeak: Joi.number().optional(),
+      hr: Joi.number().optional(),
+      obsVfc: Joi.string().optional()
     }),
   }),
 

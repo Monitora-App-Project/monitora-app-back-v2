@@ -20,6 +20,11 @@ hooperRouter.get(
   HooperController.getByFields
 );
 hooperRouter.get(
+  '/date',
+  HooperValidator.getByDate,
+  HooperController.getByDate
+);
+hooperRouter.get(
   '/:idTeste',
   HooperValidator.getByTeste,
   HooperController.getByTeste

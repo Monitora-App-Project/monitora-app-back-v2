@@ -1,4 +1,4 @@
-const HooperModel = require('../models/Hooper');
+const VFCModel = require('../models/VFC');
 const TesteModel = require('../models/Teste');
 const LogsModel = require('../models/Logs');
 
@@ -7,29 +7,17 @@ const { v4: uuidv4 } = require('uuid');
 
 require('dotenv').config();
 
-const idTipoTeste = 2;
-
-// Returns the ISO week of the date.
-Date.prototype.getWeek = function() {
-  var date = new Date(this.getTime());
-  date.setHours(0, 0, 0, 0);
-  // Thursday in current week decides the year.
-  date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
-  // January 4 is always in week 1.
-  var week1 = new Date(date.getFullYear(), 0, 4);
-  // Adjust to Thursday in week 1 and count number of weeks from date to week1.
-  return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000
-                        - 3 + (week1.getDay() + 6) % 7) / 7);
-}
+const idTipoTeste = 5;
 
 module.exports = {
   async create(request, response) {
     try {
-      const hooper = request.body;      // Chegam dados do teste geral e do hooper
-      const matriculaAtleta = hooper.matriculaAtleta;
-      const responsavel = hooper.responsavel;
-      delete hooper.matriculaAtleta;
-      delete hooper.responsavel;
+      // Salva informacoes gerais
+      const vfc = request.body; 
+      const matriculaAtleta = vfc.matriculaAtleta;
+      const responsavel = vfc.responsavel;
+      delete vfc.matriculaAtleta;
+      delete vfc.responsavel;
       const id = uuidv4(); 
       const timestamp = new Date();
 
@@ -43,25 +31,23 @@ module.exports = {
       teste.idade = await calculaIdade(matriculaAtleta);
       await TesteModel.create(teste);
 
-      // Cria hooper
-      hooper.idTeste = id;
-      hooper.diaDaSemana = timestamp.getDay();   // 0 a 6 
-      hooper.semanaDoAno = timestamp.getWeek();  // Padrao ISO-
-      await HooperModel.create(hooper);     // O restante dos dados a esta no objeto hooper
+      // Cria vfc
+      vfc.idTeste = id;
+      await VFCModel.create(vfc);     
 
       // Cria log de Create
       const log = {};                // JSON que guarda os dados a serem inseridos no log
       log.id = uuidv4();
       log.responsavel = responsavel;  
       log.data = timestamp;          
-      log.nomeTabela = "hooper";
+      log.nomeTabela = "vfc";
       log.tabelaId = id;             
       log.tipoAlteracao = "Create";
       await LogsModel.create(log); 
 
-      return response.status(201).json({ id: hooper.idTeste, horaDaColeta : timestamp });
+      return response.status(201).json({ id: vfc.idTeste, horaDaColeta : timestamp });
     } catch (err) {
-      console.error(`Hooper creation failed: ${err}`);
+      console.error(`VFC creation failed: ${err}`);
       return response.status(500).json({
         notification: 'Internal server error',
       });
@@ -70,10 +56,10 @@ module.exports = {
 
   async getAll(request, response) {
     try {
-      const result = await HooperModel.getAll();
+      const result = await VFCModel.getAll();
       return response.status(200).json(result);
     } catch (err) {
-      console.error(`CMJ getAll failed: ${err}`);
+      console.error(`VFC getAll failed: ${err}`);
       return response.status(500).json({
         notification: 'Internal server error',
       });
@@ -83,10 +69,10 @@ module.exports = {
   async getByFields(request, response) {
     try {
       const fields = request.body;
-      const result = await HooperModel.getByFields(fields);
+      const result = await VFCModel.getByFields(fields);
       return response.status(200).json(result);
     } catch (err) {
-      console.error(`Hooper getByFields failed: ${err}`);
+      console.error(`VFC getByFields failed: ${err}`);
       return response.status(500).json({
         notification: 'Internal server error',
       });
@@ -96,10 +82,10 @@ module.exports = {
   async getByTeste(request, response) {
     try {
       const { idTeste } = request.params;
-      const result = await HooperModel.getByTeste(idTeste);
+      const result = await VFCModel.getByTeste(idTeste);
       return response.status(200).json(result);
     } catch (err) {
-      console.error(`Hooper getByTeste failed: ${err}`);
+      console.error(`VFC getByTeste failed: ${err}`);
       return response.status(500).json({
         notification: 'Internal server error',
       });
@@ -109,10 +95,10 @@ module.exports = {
   async getByDate(request, response) {
     try {
       const fields = request.body;
-      const result = await HooperModel.getByDate(fields);
+      const result = await VFCModel.getByDate(fields);
       return response.status(200).json(result);
     } catch (err) {
-      console.error(`Hooper getByDate failed: ${err}`);
+      console.error(`VFC getByDate failed: ${err}`);
       return response.status(500).json({
         notification: 'Internal server error',
       });
@@ -122,27 +108,27 @@ module.exports = {
   async update(request, response) {
     try {
       const { idTeste } = request.params;
-      const hooperUpdate = request.body;
+      const vfcUpdate = request.body;
 
       // Seta valores do log
-      const responsavel = hooperUpdate.responsavel;
-      const motivo = hooperUpdate.motivo;
-      delete hooperUpdate.responsavel;
-      delete hooperUpdate.motivo;
+      const responsavel = vfcUpdate.responsavel;
+      const motivo = vfcUpdate.motivo;
+      delete vfcUpdate.responsavel;
+      delete vfcUpdate.motivo;
       const timestamp = new Date();
-      const atributos = Object.keys(hooperUpdate);
-      const valoresNovos = Object.values(hooperUpdate);
+      const atributos = Object.keys(vfcUpdate);
+      const valoresNovos = Object.values(vfcUpdate);
 
-      const hooperAtual = await HooperModel.getByTeste(idTeste);
+      const vfcAtual = await VFCModel.getByTeste(idTeste);
       const valoresAntigos = Object.fromEntries(
-        atributos.map(chave => [chave, hooperAtual[0][chave]])
+        atributos.map(chave => [chave, vfcAtual[0][chave]])
       );
       const valoresAntigosValues = Object.values(valoresAntigos);
 
       // Da o Update
-      const stillExistFieldsToUpdate = Object.values(hooperUpdate).length > 0;
+      const stillExistFieldsToUpdate = Object.values(vfcUpdate).length > 0;
       if (stillExistFieldsToUpdate) {
-        await HooperModel.updateByTeste(idTeste, hooperUpdate);
+        await VFCModel.updateByTeste(idTeste, vfcUpdate);
       }
 
       // Cria log 
@@ -150,7 +136,7 @@ module.exports = {
       log.id = uuidv4();
       log.responsavel = responsavel;
       log.data = timestamp;          
-      log.nomeTabela = "hooper";
+      log.nomeTabela = "vfc";
       log.tabelaId = idTeste;             
       log.tipoAlteracao = "Update";
       log.atributo = atributos.join(',');
@@ -161,7 +147,7 @@ module.exports = {
       
       return response.status(200).json('OK');
     } catch (err) {
-      console.error(`Hooper update failed: ${err}`);
+      console.error(`VFC update failed: ${err}`);
       return response.status(500).json({
         notification: 'Internal server error',
       });
@@ -171,9 +157,9 @@ module.exports = {
   async delete(request, response) {
     try {
       const { idTeste } = request.params;
-      const hooperDelete = request.body;
-      const responsavel = hooperDelete.responsavel;
-      const motivo = hooperDelete.motivo;
+      const vfcDelete = request.body;
+      const responsavel = vfcDelete.responsavel;
+      const motivo = vfcDelete.motivo;
       const timestamp = new Date();
 
       // Cria log 
@@ -181,17 +167,17 @@ module.exports = {
       log.id = uuidv4();
       log.responsavel = responsavel;
       log.data = timestamp;          
-      log.nomeTabela = "hooper";
+      log.nomeTabela = "vfc";
       log.tabelaId = idTeste;             
       log.tipoAlteracao = "Delete";
       log.motivo = motivo;
      
-      await HooperModel.deleteByTeste(idTeste);
+      await VFCModel.deleteByTeste(idTeste);
       await TesteModel.deleteById(idTeste);
       await LogsModel.create(log);
       return response.status(200).json("OK");
     } catch (err) {
-      console.error(`Hooper delete failed: ${err}`);
+      console.error(`VFC delete failed: ${err}`);
       return response.status(500).json({
         notification: 'Internal server error',
       });
