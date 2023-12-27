@@ -1,4 +1,4 @@
-const PseAtletaModel = require('../models/PseAtleta');
+const PseAtletaModel = require('../models/PSEAtleta');
 const TesteModel = require('../models/Teste');
 const LogsModel = require('../models/Logs');
 
