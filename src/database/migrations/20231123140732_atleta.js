@@ -1,11 +1,10 @@
 exports.up = function(knex) {
   return knex.schema.createTable("atleta", (table) => {
-    table.uuid("id").primary().unique().notNullable();
     table.integer("usuario").notNullable();
     table.string("nomeResponsavel");
     table.string("parentescoResponsavel");
     table.uuid("modalidade").notNullable();
-    table.uuid("treinador").notNullable();
+    table.integer("treinador").notNullable();
     table.string("clubeOuAssociacao");
     table.string("federacao");
     table.integer("numRegistroFederacao");
@@ -30,8 +29,8 @@ exports.up = function(knex) {
 
     table
     .foreign("treinador")
-    .references("id")
-    .inTable("treinador")
+    .references("matricula")
+    .inTable("usuario")
     .onDelete("cascade");
 
     table

@@ -61,7 +61,6 @@ module.exports = {
 
       const responsavelColeta = dadosAtleta.responsavel;
       delete dadosAtleta.responsavel;
-      dadosAtleta.id = uuidv4();
       const usuario = await UsuarioController.create({ body: dadosUsuario });
 
       dadosAtleta.usuario = usuario.matricula;
@@ -72,11 +71,11 @@ module.exports = {
       log.responsavel = responsavelColeta;
       log.data = new Date();
       log.nomeTabela = "atleta";
-      log.tabelaId = dadosAtleta.id;
+      log.tabelaId = dadosAtleta.usuario;
       log.tipoAlteracao = "Create";
       await LogsModel.create(log);
 
-      return response.status(201).json({ id: dadosAtleta.id });
+      return response.status(201).json({ matricula: dadosAtleta.usuario });
     } catch (err) {
       console.error(`Atleta creation failed: ${err}`);
       return response.status(500).json({
@@ -199,7 +198,7 @@ module.exports = {
       const { usuario } = request.params;
       const logData = request.body;
       await AtletaModel.deleteByUsuario(usuario);
-      await UsuarioModel.delete(usuario);
+      await UsuarioModel.deleteById(usuario);
 
       const log = {};
       log.id = uuidv4();

@@ -13,7 +13,7 @@ module.exports = {
     return result;
   },
 
-  async getById(usuario) {
+  async getByUsuario(usuario) {
     const result = await connection("treinador")
       .where({ usuario })
       .select("treinador.*", "usuario.*")
@@ -21,12 +21,12 @@ module.exports = {
     return result;
   },
 
-  async updateById(usuario, treinador) {
+  async updateByUsuario(usuario, treinador) {
     const result = await connection("treinador").where({ usuario }).update(treinador);
     return result;
   },
 
-  async deleteById(usuario) {
+  async deleteByUsuario(usuario) {
     const result = await connection("treinador").where({ usuario }).delete();
     return result;
   },

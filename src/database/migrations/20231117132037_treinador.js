@@ -1,6 +1,5 @@
 exports.up = function(knex) {
   return knex.schema.createTable("treinador", (table) => {
-    table.uuid("id").primary().unique().notNullable();
     table.integer("usuario").notNullable();
     table.integer("cref").notNullable();
     table.uuid("modalidade").notNullable();

@@ -63,4 +63,8 @@ const atributosAtleta = [
   "financiador"
 ];
 
-module.exports = { atributosUsuario, atributosAtleta };
+const atributosProfessor = ["departamento", "matricula_ufmg", "nivel", "equipe"];
+
+const atributosTreinador = ["cref", "modalidade"];
+
+module.exports = { atributosUsuario, atributosAtleta, atributosProfessor, atributosTreinador };
