@@ -1,7 +1,7 @@
-const CMJModel = require('../models/CMJ');
-const {calcularMedia, calcularDesvioPadrao} = require('../utilities');
-const { v4: uuidv4 } = require('uuid');
-require('dotenv').config();
+const CMJModel = require("../models/CMJ");
+const { calcularMedia, calcularDesvioPadrao } = require("../utils/utilities");
+const { v4: uuidv4 } = require("uuid");
+require("dotenv").config();
 
 module.exports = {
   async create(request, response) {
@@ -20,7 +20,7 @@ module.exports = {
     } catch (err) {
       console.error(`CMJ creation failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -32,7 +32,7 @@ module.exports = {
     } catch (err) {
       console.error(`CMJ getAll failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -45,7 +45,7 @@ module.exports = {
     } catch (err) {
       console.error(`CMJ getByTeste failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -58,7 +58,7 @@ module.exports = {
     } catch (err) {
       console.error(`CMJ getByFields failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -71,7 +71,7 @@ module.exports = {
     } catch (err) {
       console.error(`CMJ getByDate failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -84,11 +84,11 @@ module.exports = {
       if (stillExistFieldsToUpdate) {
         await CMJModel.updateByTeste(idTeste, cmj);
       }
-      return response.status(200).json('OK');
+      return response.status(200).json("OK");
     } catch (err) {
       console.error(`CMJ update failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -101,9 +101,8 @@ module.exports = {
     } catch (err) {
       console.error(`CMJ delete failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
-  },
-
+  }
 };

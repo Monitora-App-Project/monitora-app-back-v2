@@ -1,4 +1,4 @@
-const { celebrate, Segments, Joi} = require('celebrate');
+const { celebrate, Segments, Joi } = require("celebrate");
 // const Joi = require('joi').extend(require('@joi/date'));
 
 module.exports = {
@@ -6,7 +6,7 @@ module.exports = {
     [Segments.BODY]: Joi.object().keys({
       matriculaAtleta: Joi.number().integer().required(),
       responsavel: Joi.number().integer().required(),
-    
+
       rmssd: Joi.number().required(),
       sdnn: Joi.number().required(),
       lnRmssd: Joi.number().required(),
@@ -20,30 +20,30 @@ module.exports = {
       hfPeak: Joi.number().required(),
       hr: Joi.number().required(),
       obsVfc: Joi.string().optional()
-    }),
+    })
   }),
 
   getByDate: celebrate({
     [Segments.BODY]: Joi.object().keys({
       dataColetaMin: Joi.string().required(),
       dataColetaMax: Joi.string().required()
-    }),
+    })
   }),
 
   getByTeste: celebrate({
     [Segments.PARAMS]: Joi.object().keys({
-      idTeste: Joi.string().guid({version: 'uuidv4'}).required(),
-    }),
+      idTeste: Joi.string().guid({ version: "uuidv4" }).required()
+    })
   }),
 
   update: celebrate({
     [Segments.PARAMS]: Joi.object().keys({
-      idTeste: Joi.string().guid({version: 'uuidv4'}).required(),
+      idTeste: Joi.string().guid({ version: "uuidv4" }).required()
     }),
     [Segments.BODY]: Joi.object().keys({
       responsavel: Joi.number().integer().required(),
-      motivo : Joi.string().required(),
-      
+      motivo: Joi.string().required(),
+
       rmssd: Joi.number().optional(),
       sdnn: Joi.number().optional(),
       lnRmssd: Joi.number().optional(),
@@ -57,17 +57,17 @@ module.exports = {
       hfPeak: Joi.number().optional(),
       hr: Joi.number().optional(),
       obsVfc: Joi.string().optional()
-    }),
+    })
   }),
 
   delete: celebrate({
     [Segments.PARAMS]: Joi.object().keys({
-      idTeste: Joi.string().guid({version: 'uuidv4'}).required(),
+      idTeste: Joi.string().guid({ version: "uuidv4" }).required()
     }),
 
     [Segments.BODY]: Joi.object().keys({
       responsavel: Joi.number().integer().required(),
-      motivo : Joi.string().required()
-    }),
-  }),
+      motivo: Joi.string().required()
+    })
+  })
 };

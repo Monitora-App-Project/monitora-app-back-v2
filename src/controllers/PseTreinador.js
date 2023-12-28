@@ -1,41 +1,40 @@
-const PseTreinadorModel = require('../models/PseTreinador');
-const TesteModel = require('../models/Teste');
-const LogsModel = require('../models/Logs');
+const PseTreinadorModel = require("../models/PseTreinador");
+const TesteModel = require("../models/Teste");
+const LogsModel = require("../models/Logs");
 
-const {pegaModalidade, calculaIdade} = require('../utilities');
-const { v4: uuidv4 } = require('uuid');
+const { pegaModalidade, calculaIdade } = require("../utils/utilities");
+const { v4: uuidv4 } = require("uuid");
 
-require('dotenv').config();
+require("dotenv").config();
 
 const idTipoTeste = 4;
 
 // Returns the ISO week of the date.
-Date.prototype.getWeek = function() {
+Date.prototype.getWeek = function () {
   var date = new Date(this.getTime());
   date.setHours(0, 0, 0, 0);
   // Thursday in current week decides the year.
-  date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+  date.setDate(date.getDate() + 3 - ((date.getDay() + 6) % 7));
   // January 4 is always in week 1.
   var week1 = new Date(date.getFullYear(), 0, 4);
   // Adjust to Thursday in week 1 and count number of weeks from date to week1.
-  return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000
-                        - 3 + (week1.getDay() + 6) % 7) / 7);
-}
+  return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000 - 3 + ((week1.getDay() + 6) % 7)) / 7);
+};
 
 module.exports = {
   async create(request, response) {
     try {
       // Salva informacoes gerais
-      const pseTreinador = request.body; 
+      const pseTreinador = request.body;
       const matriculaAtleta = pseTreinador.matriculaAtleta;
       const responsavel = pseTreinador.responsavel;
       delete pseTreinador.matriculaAtleta;
       delete pseTreinador.responsavel;
-      const id = uuidv4(); 
+      const id = uuidv4();
       const timestamp = new Date();
 
       // Cria teste geral
-      const teste = {};               // JSON que guarda os dados do teste geral
+      const teste = {}; // JSON que guarda os dados do teste geral
       teste.id = id;
       teste.horaDaColeta = timestamp;
       teste.matriculaAtleta = matriculaAtleta;
@@ -46,25 +45,25 @@ module.exports = {
 
       // Cria pseTreinador
       pseTreinador.idTeste = id;
-      pseTreinador.diaDaSemana = timestamp.getDay();   // 0 a 6 
-      pseTreinador.semanaDoAno = timestamp.getWeek();  // Padrao ISO-
-      await PseTreinadorModel.create(pseTreinador);     
+      pseTreinador.diaDaSemana = timestamp.getDay(); // 0 a 6
+      pseTreinador.semanaDoAno = timestamp.getWeek(); // Padrao ISO-
+      await PseTreinadorModel.create(pseTreinador);
 
       // Cria log de Create
-      const log = {};                // JSON que guarda os dados a serem inseridos no log
+      const log = {}; // JSON que guarda os dados a serem inseridos no log
       log.id = uuidv4();
-      log.responsavel = responsavel;  
-      log.data = timestamp;          
+      log.responsavel = responsavel;
+      log.data = timestamp;
       log.nomeTabela = "pseTreinador";
-      log.tabelaId = id;             
+      log.tabelaId = id;
       log.tipoAlteracao = "Create";
-      await LogsModel.create(log); 
+      await LogsModel.create(log);
 
-      return response.status(201).json({ id: pseTreinador.idTeste, horaDaColeta : timestamp });
+      return response.status(201).json({ id: pseTreinador.idTeste, horaDaColeta: timestamp });
     } catch (err) {
       console.error(`PSETreinador creation failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -76,7 +75,7 @@ module.exports = {
     } catch (err) {
       console.error(`PSETreinador getAll failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -89,7 +88,7 @@ module.exports = {
     } catch (err) {
       console.error(`PSETreinador getByFields failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -102,7 +101,7 @@ module.exports = {
     } catch (err) {
       console.error(`PSETreinador getByTeste failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -115,7 +114,7 @@ module.exports = {
     } catch (err) {
       console.error(`PSETreinador getByDate failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -135,9 +134,7 @@ module.exports = {
       const valoresNovos = Object.values(pseTreinadorUpdate);
 
       const pseTreinadorAtual = await PseTreinadorModel.getByTeste(idTeste);
-      const valoresAntigos = Object.fromEntries(
-        atributos.map(chave => [chave, pseTreinadorAtual[0][chave]])
-      );
+      const valoresAntigos = Object.fromEntries(atributos.map((chave) => [chave, pseTreinadorAtual[0][chave]]));
       const valoresAntigosValues = Object.values(valoresAntigos);
 
       // Da o Update
@@ -146,25 +143,25 @@ module.exports = {
         await PseTreinadorModel.updateByTeste(idTeste, pseTreinadorUpdate);
       }
 
-      // Cria log 
-      const log = {};          
+      // Cria log
+      const log = {};
       log.id = uuidv4();
       log.responsavel = responsavel;
-      log.data = timestamp;          
+      log.data = timestamp;
       log.nomeTabela = "pseTreinador";
-      log.tabelaId = idTeste;             
+      log.tabelaId = idTeste;
       log.tipoAlteracao = "Update";
-      log.atributo = atributos.join(',');
-      log.valorAntigo = valoresAntigosValues.join(',');
-      log.novoValor = valoresNovos.join(',');
+      log.atributo = atributos.join(",");
+      log.valorAntigo = valoresAntigosValues.join(",");
+      log.novoValor = valoresNovos.join(",");
       log.motivo = motivo;
       await LogsModel.create(log);
-      
-      return response.status(200).json('OK');
+
+      return response.status(200).json("OK");
     } catch (err) {
       console.error(`PSETreinador update failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -177,16 +174,16 @@ module.exports = {
       const motivo = pseTreinadorDelete.motivo;
       const timestamp = new Date();
 
-      // Cria log 
-      const log = {};          
+      // Cria log
+      const log = {};
       log.id = uuidv4();
       log.responsavel = responsavel;
-      log.data = timestamp;          
+      log.data = timestamp;
       log.nomeTabela = "pseTreinador";
-      log.tabelaId = idTeste;             
+      log.tabelaId = idTeste;
       log.tipoAlteracao = "Delete";
       log.motivo = motivo;
-     
+
       await PseTreinadorModel.deleteByTeste(idTeste);
       await TesteModel.deleteById(idTeste);
       await LogsModel.create(log);
@@ -194,9 +191,8 @@ module.exports = {
     } catch (err) {
       console.error(`PSETreinador delete failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
-  },
-
+  }
 };

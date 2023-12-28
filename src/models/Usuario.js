@@ -1,30 +1,30 @@
-const connection = require('../database/connection');
-require('dotenv').config();
-const { getByUsuario } = require('./Atleta');
+const connection = require("../database/connection");
+require("dotenv").config();
+const { getByUsuario } = require("./Atleta");
 
 module.exports = {
   async create(usuario) {
-    const result = await connection('usuario').insert(usuario);
+    const result = await connection("usuario").insert(usuario);
     return result;
   },
 
   async getAll() {
-    const result = await connection('usuario').select('*');
+    const result = await connection("usuario").select("*");
     const usuarios = [];
 
     for (const user of result) {
       if (user.tipo === process.env.ATLETA_SECRET) {
-        const atletas = await connection('atleta').select('*');
+        const atletas = await connection("atleta").select("*");
         const atleta = atletas.filter((element) => element.usuario === user.matricula);
         user.info = atleta;
       }
       if (user.tipo === process.env.TREINADOR_SECRET) {
-        const treinadores = await connection('treinador').select('*');
+        const treinadores = await connection("treinador").select("*");
         const treinador = treinadores.filter((element) => element.usuario === user.matricula);
         user.info = treinador;
       }
       if (user.tipo === process.env.ADMIN_SECRET) {
-        const admins = await connection('professor').select('*');
+        const admins = await connection("professor").select("*");
         const admin = admins.filter((element) => element.usuario === user.matricula);
         user.info = admin;
       }
@@ -41,45 +41,35 @@ module.exports = {
   },
 
   async getById(matricula) {
-    const result = await connection('usuario')
-      .where({ matricula })
-      .select('*')
-      .first();
+    const result = await connection("usuario").where({ matricula }).select("*").first();
     return result;
   },
 
   async updateById(matricula, usuario) {
-    const result = await connection('usuario')
-      .where({ matricula })
-      .update(usuario);
+    const result = await connection("usuario").where({ matricula }).update(usuario);
     return result;
   },
 
   async deleteById(matricula) {
-    const result = await connection('usuario').where({ matricula }).delete();
+    const result = await connection("usuario").where({ matricula }).delete();
     return result;
   },
 
   async getByFields(fields) {
-    const result = await connection('usuario')
-      .where(fields)
-      .select('*')
-      .first();
+    const result = await connection("usuario").where(fields).select("*").first();
     return result;
   },
 
-  async getDataNascimento(matricula){
-    const result = await connection('usuario')
-      .where({ matricula })
-      .select('dataNascimento');
+  async getDataNascimento(matricula) {
+    const result = await connection("usuario").where({ matricula }).select("dataNascimento");
     return result;
   },
 
   async getModalidadeAtleta(matricula) {
-    const result = await connection('usuario')
-      .leftJoin('atleta', 'usuario.matricula', 'atleta.usuario')
-      .select('atleta.modalidade')
+    const result = await connection("usuario")
+      .leftJoin("atleta", "usuario.matricula", "atleta.usuario")
+      .select("atleta.modalidade")
       .where({ matricula });
     return result;
-  },
+  }
 };

@@ -1,4 +1,4 @@
-const { celebrate, Segments, Joi } = require('celebrate');
+const { celebrate, Segments, Joi } = require("celebrate");
 
 module.exports = {
   create: celebrate({
@@ -8,13 +8,7 @@ module.exports = {
     //   })
     //   .unknown(),
     [Segments.BODY]: Joi.object().keys({
-      tipo: Joi.string().valid(
-        'admin',
-        'coordenador',
-        'analista',
-        'treinador',
-        'atleta'
-      ).required(),
+      tipo: Joi.string().valid("admin", "coordenador", "analista", "treinador", "atleta").required(),
       email: Joi.string().email().required(),
       senha: Joi.string().required(),
       ativo: Joi.boolean().required(),
@@ -25,10 +19,8 @@ module.exports = {
       dataEmissaoRg: Joi.date().required(),
       orgaoExpedidorRg: Joi.string().required(),
       cpf: Joi.number().integer().required(),
-      sexo: Joi.string().valid('Feminino', 'Masculino').required(),
-      estadoCivil: Joi.string().valid(
-        'Solteiro', 'Casado', 'Separado', 'Divorciado', 'Viuvo'
-      ).required(),
+      sexo: Joi.string().valid("Feminino", "Masculino").required(),
+      estadoCivil: Joi.string().valid("Solteiro", "Casado", "Separado", "Divorciado", "Viuvo").required(),
       logadouro: Joi.string().required(),
       numeroEndereco: Joi.number().integer().required(),
       complemento: Joi.string().required(),
@@ -42,9 +34,7 @@ module.exports = {
       tipoAlergia: Joi.string().max(255),
       usaMedicamento: Joi.boolean().required(),
       tipoMedicamento: Joi.string().max(255),
-      tipoSanguineo: Joi.string().valid(
-        'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'
-      ).required(),
+      tipoSanguineo: Joi.string().valid("A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-").required(),
       contatoEmg: Joi.string().required(),
       nomeContatoEmg: Joi.string().required(),
       temConvenio: Joi.boolean().required(),
@@ -54,12 +44,10 @@ module.exports = {
       fimAtendimentoCTE: Joi.date().required(),
       possuiDeficiencia: Joi.boolean().required(),
       tipoDeficiencia: Joi.string().max(255),
-      meioTransporte: Joi.string().valid(
-        'Onibus', 'Carro', 'Moto', 'Bicicleta', 'Ape'
-      ).required(),
+      meioTransporte: Joi.string().valid("Onibus", "Carro", "Moto", "Bicicleta", "Ape").required(),
       placaOuLinha: Joi.string().max(50),
-      dataCadastro: Joi.date().required(),
-    }),
+      dataCadastro: Joi.date().required()
+    })
   }),
 
   // getAll: celebrate({
@@ -77,8 +65,8 @@ module.exports = {
     //   })
     //   .unknown(),
     [Segments.PARAMS]: Joi.object().keys({
-      matricula: Joi.number().required(),
-    }),
+      matricula: Joi.number().required()
+    })
   }),
 
   update: celebrate({
@@ -88,17 +76,11 @@ module.exports = {
     //   })
     //   .unknown(),
     [Segments.PARAMS]: Joi.object().keys({
-      matricula: Joi.number().required(),
+      matricula: Joi.number().required()
     }),
     [Segments.BODY]: Joi.object().keys({
       matricula: Joi.number().integer().optional(),
-      tipo: Joi.string().valid(
-        'admin',
-        'coordenador',
-        'analista',
-        'treinador',
-        'atleta'
-      ).optional(),
+      tipo: Joi.string().valid("admin", "coordenador", "analista", "treinador", "atleta").optional(),
       email: Joi.string().email().optional(),
       senha: Joi.string().optional(),
       ativo: Joi.boolean().optional(),
@@ -109,10 +91,8 @@ module.exports = {
       dataEmissaoRg: Joi.date().optional(),
       orgaoExpedidorRg: Joi.string().optional(),
       cpf: Joi.number().integer().optional(),
-      sexo: Joi.string().valid('Feminino', 'Masculino').optional(),
-      estadoCivil: Joi.string().valid(
-        'Solteiro', 'Casado', 'Separado', 'Divorciado', 'Viuvo'
-      ).optional(),
+      sexo: Joi.string().valid("Feminino", "Masculino").optional(),
+      estadoCivil: Joi.string().valid("Solteiro", "Casado", "Separado", "Divorciado", "Viuvo").optional(),
       logadouro: Joi.string().optional(),
       numeroEndereco: Joi.number().integer().optional(),
       complemento: Joi.string().optional(),
@@ -126,9 +106,7 @@ module.exports = {
       tipoAlergia: Joi.string().max(255).optional(),
       usaMedicamento: Joi.boolean().optional(),
       tipoMedicamento: Joi.string().max(255).optional(),
-      tipoSanguineo: Joi.string().valid(
-        'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'
-      ).optional(),
+      tipoSanguineo: Joi.string().valid("A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-").optional(),
       contatoEmg: Joi.string().optional(),
       nomeContatoEmg: Joi.string().optional(),
       temConvenio: Joi.boolean().optional(),
@@ -138,12 +116,10 @@ module.exports = {
       fimAtendimentoCTE: Joi.date().optional(),
       possuiDeficiencia: Joi.boolean().optional(),
       tipoDeficiencia: Joi.string().max(255).optional(),
-      meioTransporte: Joi.string().valid(
-        'Onibus', 'Carro', 'Moto', 'Bicicleta', 'Ape'
-      ).optional(),
+      meioTransporte: Joi.string().valid("Onibus", "Carro", "Moto", "Bicicleta", "Ape").optional(),
       placaOuLinha: Joi.string().max(50).optional(),
-      dataCadastro: Joi.date().optional(),
-    }),
+      dataCadastro: Joi.date().optional()
+    })
   }),
 
   delete: celebrate({
@@ -153,7 +129,7 @@ module.exports = {
     //   })
     //   .unknown(),
     [Segments.PARAMS]: Joi.object().keys({
-      matricula: Joi.number().required(),
-    }),
-  }),
+      matricula: Joi.number().required()
+    })
+  })
 };

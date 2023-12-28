@@ -1,6 +1,6 @@
-const ProfessorModel = require('../models/Professor');
-const { v4: uuidv4 } = require('uuid');
-require('dotenv').config();
+const ProfessorModel = require("../models/Professor");
+const { v4: uuidv4 } = require("uuid");
+require("dotenv").config();
 
 module.exports = {
   async create(request, response) {
@@ -13,7 +13,7 @@ module.exports = {
     } catch (err) {
       console.error(`Professor creation failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -25,7 +25,7 @@ module.exports = {
     } catch (err) {
       console.error(`Professor getAll failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -38,7 +38,7 @@ module.exports = {
     } catch (err) {
       console.error(`Professor getByUsuario failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -51,11 +51,11 @@ module.exports = {
       if (stillExistFieldsToUpdate) {
         await ProfessorModel.updateByUsuario(usuario, professor);
       }
-      return response.status(200).json('OK');
+      return response.status(200).json("OK");
     } catch (err) {
       console.error(`Professor update failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -68,8 +68,8 @@ module.exports = {
     } catch (err) {
       console.error(`Professor delete failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
-  },
+  }
 };

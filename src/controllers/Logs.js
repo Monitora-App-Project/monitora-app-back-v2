@@ -1,6 +1,6 @@
-const LogsModel = require('../models/Logs');
-const { v4: uuidv4 } = require('uuid');
-require('dotenv').config();
+const LogsModel = require("../models/Logs");
+const { v4: uuidv4 } = require("uuid");
+require("dotenv").config();
 
 module.exports = {
   async create(request, response) {
@@ -13,7 +13,7 @@ module.exports = {
     } catch (err) {
       console.error(`Log creation failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -25,7 +25,7 @@ module.exports = {
     } catch (err) {
       console.error(`Logs getAll failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -38,7 +38,7 @@ module.exports = {
     } catch (err) {
       console.error(`Log getByResponsavel failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -51,7 +51,7 @@ module.exports = {
     } catch (err) {
       console.error(`Log getById failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -64,7 +64,7 @@ module.exports = {
     } catch (err) {
       console.error(`Log getByFields failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -77,11 +77,11 @@ module.exports = {
       if (stillExistFieldsToUpdate) {
         await LogsModel.updateById(id, log);
       }
-      return response.status(200).json('OK');
+      return response.status(200).json("OK");
     } catch (err) {
       console.error(`Log update failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -94,8 +94,8 @@ module.exports = {
     } catch (err) {
       console.error(`Log delete failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
-  },
+  }
 };

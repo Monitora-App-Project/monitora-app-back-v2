@@ -1,6 +1,6 @@
-const TreinadorModel = require('../models/Treinador');
-const { v4: uuidv4 } = require('uuid');
-require('dotenv').config();
+const TreinadorModel = require("../models/Treinador");
+const { v4: uuidv4 } = require("uuid");
+require("dotenv").config();
 
 module.exports = {
   async create(request, response) {
@@ -13,7 +13,7 @@ module.exports = {
     } catch (err) {
       console.error(`Treinador creation failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -25,7 +25,7 @@ module.exports = {
     } catch (err) {
       console.error(`Treinador getAll failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -38,7 +38,7 @@ module.exports = {
     } catch (err) {
       console.error(`Treinador getById failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -51,7 +51,7 @@ module.exports = {
     } catch (err) {
       console.error(`Treinador getByFields failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -64,11 +64,11 @@ module.exports = {
       if (stillExistFieldsToUpdate) {
         await TreinadorModel.updateById(id, treinador);
       }
-      return response.status(200).json('OK');
+      return response.status(200).json("OK");
     } catch (err) {
       console.error(`Treinador update failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -81,8 +81,8 @@ module.exports = {
     } catch (err) {
       console.error(`Treinador delete failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
-  },
+  }
 };
