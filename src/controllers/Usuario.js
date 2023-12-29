@@ -36,6 +36,9 @@ module.exports = {
     try {
       const usuario = request.body;
       usuario.matricula = gerarMatricula();
+      while (await UsuarioModel.verificaMatriculaExiste(usuario.matricula)) {
+        usuario.matricula = gerarMatricula();
+      }
       usuario.tipo = defineUsuarioSecret(usuario.tipo);
       await UsuarioModel.create(usuario);
       return { matricula: usuario.matricula };

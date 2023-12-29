@@ -45,6 +45,12 @@ module.exports = {
     return result;
   },
 
+  async verificaMatriculaExiste(matricula) {
+    const result = await connection("usuario").where({ matricula }).select("*").first();
+    if (result) return true;
+    else return false;
+  },
+
   async updateById(matricula, usuario) {
     const result = await connection("usuario").where({ matricula }).update(usuario);
     return result;
