@@ -11,6 +11,11 @@ professorRouter.get('/',
   ProfessorController.getAll
 );
 professorRouter.get(
+  '/fields',
+  // ProfessorValidator.getAll,
+  ProfessorController.getByFields
+);
+professorRouter.get(
   '/:usuario',
   ProfessorValidator.getByUsuario,
   ProfessorController.getByUsuario

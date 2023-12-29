@@ -11,6 +11,11 @@ alunoRouter.get('/',
   AlunoController.getAll
 );
 alunoRouter.get(
+  '/fields',
+  // AlunoValidator.getAll,
+  AlunoController.getByFields
+);
+alunoRouter.get(
   '/:usuario',
   AlunoValidator.getByUsuario,
   AlunoController.getByUsuario

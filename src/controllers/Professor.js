@@ -139,6 +139,19 @@ module.exports = {
     }
   },
 
+  async getByFields(request, response) {
+    try {
+      const fields = request.body;
+      const result = await ProfessorModel.getByFields(fields);
+      return response.status(200).json(result);
+    } catch (err) {
+      console.error(`Professor getByFields failed: ${err}`);
+      return response.status(500).json({
+        notification: "Internal server error"
+      });
+    }
+  },
+
   async update(request, response) {
     try {
       const { usuario } = request.params;
