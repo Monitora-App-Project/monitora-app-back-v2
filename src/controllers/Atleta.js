@@ -133,18 +133,23 @@ module.exports = {
 
       const atletaFieldsToUpdate = Object.keys(dataToUpdate).filter((key) => atletaKeys.includes(key));
       const usuarioFieldsToUpdate = Object.keys(dataToUpdate).filter((key) => usuarioKeys.includes(key));
-      const responsavel = dataToUpdate.responsavel;
-      const motivo = dataToUpdate.motivo;
-      delete dataToUpdate.responsavel;
-      delete dataToUpdate.motivo;
 
       const log = {};
       log.nomeTabela = "atleta";
-      log.responsavel = responsavel;
+      log.responsavel =  dataToUpdate.responsavel;
       log.data = new Date();
       log.tabelaId = usuario;
       log.tipoAlteracao = "Update";
-      log.motivo = motivo;
+      log.motivo = dataToUpdate.motivo;
+
+      const ocorrencia = {};
+      ocorrencia.responsavel =  dataToUpdate.responsavel;
+      ocorrencia.data = new Date();
+      ocorrencia.motivo = dataToUpdate.motivo;
+      ocorrencia.usuarioModificado = usuario;
+
+      delete dataToUpdate.responsavel;
+      delete dataToUpdate.motivo;
 
       if (atletaFieldsToUpdate.length > 0) {
         const atletaDataToUpdate = atletaFieldsToUpdate.reduce((obj, key) => {
@@ -163,25 +168,12 @@ module.exports = {
         await AtletaModel.updateByUsuario(usuario, atletaDataToUpdate);
         await LogsModel.create(log);
 
-        const ocorrencia = {};
-        ocorrencia.responsavel = responsavel;
-        ocorrencia.data = new Date();
-        ocorrencia.motivo = motivo;
-        ocorrencia.usuarioModificado = usuario;
-
         for (const atributo of atributos) {
           if (atributo === "modalidade") {
             ocorrencia.id = uuidv4();
             ocorrencia.atributo = atributo;
             ocorrencia.valorAntigo = valoresAntigos.modalidade;
             ocorrencia.novoValor = atletaDataToUpdate.modalidade;
-            await OcorrenciasModel.create(ocorrencia);
-          }
-          if (atributo === "ativo") {
-            ocorrencia.id = uuidv4();
-            ocorrencia.atributo = atributo;
-            ocorrencia.valorAntigo = valoresAntigos.ativo;
-            ocorrencia.novoValor = atletaDataToUpdate.ativo;
             await OcorrenciasModel.create(ocorrencia);
           }
         }
@@ -203,12 +195,6 @@ module.exports = {
         log.novoValor = valoresNovos.join(",");
         await UsuarioModel.updateById(usuario, usuarioDataToUpdate);
         await LogsModel.create(log);
-
-        const ocorrencia = {};
-        ocorrencia.responsavel = responsavel;
-        ocorrencia.data = new Date();
-        ocorrencia.motivo = motivo;
-        ocorrencia.usuarioModificado = usuario;
 
         for (const atributo of atributos) {
           if (atributo === "ativo") {

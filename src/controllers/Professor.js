@@ -1,10 +1,33 @@
 const ProfessorModel = require("../models/Professor");
 const UsuarioController = require("./Usuario");
+const OcorrenciasModel = require("../models/Ocorrencias");
 const LogsModel = require("../models/Logs");
 const UsuarioModel = require("../models/Usuario");
 const { atributosProfessor, atributosUsuario } = require("../utils/atributos");
 const { v4: uuidv4 } = require("uuid");
 require("dotenv").config();
+
+function defineUsuarioSecret(tipo) {
+  switch (tipo) {
+    case "admin":
+      return process.env.ADMIN_SECRET;
+
+    case "coordenador":
+      return process.env.COORDENADOR_SECRET;
+
+    case "analista":
+      return process.env.ANALISTA_SECRET;
+
+    case "treinador":
+      return process.env.TREINADOR_SECRET;
+
+    case "atleta":
+      return process.env.ATLETA_SECRET;
+
+    default:
+      break;
+  }
+}
 
 module.exports = {
   async create(request, response) {
@@ -91,6 +114,12 @@ module.exports = {
       log.tipoAlteracao = "Update";
       log.motivo = dataToUpdate.motivo;
 
+      const ocorrencia = {};
+      ocorrencia.responsavel = dataToUpdate.responsavel;
+      ocorrencia.data = new Date();
+      ocorrencia.motivo = dataToUpdate.motivo;
+      ocorrencia.usuarioModificado = usuario;
+
       delete dataToUpdate.responsavel;
       delete dataToUpdate.motivo;
 
@@ -117,7 +146,13 @@ module.exports = {
           obj[key] = dataToUpdate[key];
           return obj;
         }, {});
+
         const atributos = Object.keys(usuarioDataToUpdate);
+        for (const atributo of atributos) {
+          if (atributo === "tipo") {
+            usuarioDataToUpdate.tipo = defineUsuarioSecret(usuarioDataToUpdate.tipo);
+          }
+        }
         const valoresNovos = Object.values(usuarioDataToUpdate);
         log.id = uuidv4();
         log.atributo = atributos.join(",");
@@ -128,6 +163,23 @@ module.exports = {
         log.novoValor = valoresNovos.join(",");
         await UsuarioModel.updateById(usuario, usuarioDataToUpdate);
         await LogsModel.create(log);
+
+        for (const atributo of atributos) {
+          if (atributo === "ativo") {
+            ocorrencia.id = uuidv4();
+            ocorrencia.atributo = atributo;
+            ocorrencia.valorAntigo = valoresAntigos.ativo;
+            ocorrencia.novoValor = usuarioDataToUpdate.ativo;
+            await OcorrenciasModel.create(ocorrencia);
+          }
+          if (atributo === "tipo") {
+            ocorrencia.id = uuidv4();
+            ocorrencia.atributo = atributo;
+            ocorrencia.valorAntigo = valoresAntigos.tipo;
+            ocorrencia.novoValor = usuarioDataToUpdate.tipo;
+            await OcorrenciasModel.create(ocorrencia);
+          }
+        }
       }
 
       if (professorFieldsToUpdate.length === 0 && usuarioFieldsToUpdate.length === 0) {
@@ -149,7 +201,7 @@ module.exports = {
       const logData = request.body;
       await ProfessorModel.deleteByUsuario(usuario);
       await UsuarioModel.deleteById(usuario);
-      
+
       const log = {};
       log.id = uuidv4();
       log.responsavel = logData.responsavel;

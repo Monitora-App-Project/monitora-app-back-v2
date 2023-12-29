@@ -1,5 +1,6 @@
 const TreinadorModel = require("../models/Treinador");
 const UsuarioController = require("./Usuario");
+const OcorrenciasModel = require("../models/Ocorrencias");
 const LogsModel = require("../models/Logs");
 const UsuarioModel = require("../models/Usuario");
 const { atributosTreinador, atributosUsuario } = require("../utils/atributos");
@@ -102,6 +103,12 @@ module.exports = {
       log.tipoAlteracao = "Update";
       log.motivo = dataToUpdate.motivo;
 
+      const ocorrencia = {};
+      ocorrencia.responsavel = dataToUpdate.responsavel;
+      ocorrencia.data = new Date();
+      ocorrencia.motivo = dataToUpdate.motivo;
+      ocorrencia.usuarioModificado = usuario;
+
       delete dataToUpdate.responsavel;
       delete dataToUpdate.motivo;
 
@@ -139,6 +146,16 @@ module.exports = {
         log.novoValor = valoresNovos.join(",");
         await UsuarioModel.updateById(usuario, usuarioDataToUpdate);
         await LogsModel.create(log);
+
+        for (const atributo of atributos) {
+          if (atributo === "ativo") {
+            ocorrencia.id = uuidv4();
+            ocorrencia.atributo = atributo;
+            ocorrencia.valorAntigo = valoresAntigos.ativo;
+            ocorrencia.novoValor = usuarioDataToUpdate.ativo;
+            await OcorrenciasModel.create(ocorrencia);
+          }
+        }
       }
 
       if (treinadorFieldsToUpdate.length === 0 && usuarioFieldsToUpdate.length === 0) {
