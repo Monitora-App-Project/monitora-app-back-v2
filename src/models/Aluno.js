@@ -21,6 +21,15 @@ module.exports = {
     return result;
   },
 
+  async getAtributoByUsuario(usuario, atributo) {
+    const result = await connection("aluno")
+      .where({ usuario })
+      .innerJoin("usuario", "aluno.usuario", "usuario.matricula")
+      .select(`${atributo} as atributo`)
+      .first();
+    return result;
+  },
+
   async updateByUsuario(usuario, aluno) {
     const result = await connection("aluno").where({ usuario }).update(aluno);
     return result;

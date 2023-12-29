@@ -50,6 +50,15 @@ module.exports = {
     })
   }),
 
+  createFromAluno: celebrate({
+    [Segments.BODY]: Joi.object().keys({
+      departamento: Joi.string().required(),
+      nivel: Joi.valid("Graduação", "Mestrado", "Doutorado", "Pós-Doc").required(),
+      equipe: Joi.string().required(),
+      responsavel: Joi.number().required()
+    })
+  }),
+
   getByUsuario: celebrate({
     [Segments.PARAMS]: Joi.object().keys({
       usuario: Joi.number().required()

@@ -20,6 +20,11 @@ professorRouter.post(
   ProfessorValidator.create,
   ProfessorController.create
 );
+professorRouter.post(
+  '/createFromAluno/:usuario',
+  ProfessorValidator.createFromAluno,
+  ProfessorController.createFromAluno
+);
 professorRouter.put(
   '/:usuario',
   ProfessorValidator.update,

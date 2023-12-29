@@ -1,4 +1,5 @@
 const ProfessorModel = require("../models/Professor");
+const AlunoModel = require("../models/Aluno");
 const UsuarioController = require("./Usuario");
 const OcorrenciasModel = require("../models/Ocorrencias");
 const LogsModel = require("../models/Logs");
@@ -62,6 +63,49 @@ module.exports = {
       await LogsModel.create(log);
 
       return response.status(201).json({ matricula: dadosProfessor.usuario });
+    } catch (err) {
+      console.error(`Professor creation failed: ${err}`);
+      return response.status(500).json({
+        notification: "Internal server error"
+      });
+    }
+  },
+
+  async createFromAluno(request, response) {
+    try {
+      const { usuario } =  request.params;
+      const requestData = request.body;
+
+      const responsavel = requestData.responsavel
+      const log = {};
+      log.id = uuidv4();
+      log.responsavel = responsavel;
+      log.data = new Date();
+      log.nomeTabela = "professor";
+      log.tipoAlteracao = "Create";
+
+      delete requestData.responsavel;
+
+      const { atributo } = await AlunoModel.getAtributoByUsuario(usuario, "matricula_ufmg");
+      requestData.matricula_ufmg = atributo;
+      requestData.usuario = usuario;
+      log.tabelaId = requestData.usuario;
+
+      await ProfessorModel.create(requestData);
+      await LogsModel.create(log);
+
+      const log_aluno = {};
+      log_aluno.id = uuidv4();
+      log_aluno.responsavel = responsavel;
+      log_aluno.data = new Date();
+      log_aluno.tabelaId = usuario;
+      log_aluno.nomeTabela = "aluno";
+      log_aluno.tipoAlteracao = "Delete";
+      log_aluno.motivo = "Foi promovido a professor";
+      await AlunoModel.deleteByUsuario(usuario);
+      await LogsModel.create(log_aluno);
+
+      return response.status(201).json({ notification: "Professor criado com sucesso!" });
     } catch (err) {
       console.error(`Professor creation failed: ${err}`);
       return response.status(500).json({
