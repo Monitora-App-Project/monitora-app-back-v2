@@ -67,4 +67,6 @@ const atributosProfessor = ["departamento", "matricula_ufmg", "nivel", "equipe"]
 
 const atributosTreinador = ["cref", "modalidade"];
 
-module.exports = { atributosUsuario, atributosAtleta, atributosProfessor, atributosTreinador };
+const atributosAluno = ["curso", "matricula_ufmg", "nivel", "orientador"];
+
+module.exports = { atributosUsuario, atributosAtleta, atributosProfessor, atributosTreinador, atributosAluno };
