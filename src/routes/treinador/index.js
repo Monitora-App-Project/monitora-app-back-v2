@@ -17,8 +17,8 @@ treinadorRouter.get(
 );
 treinadorRouter.get(
   '/:id',
-  TreinadorValidator.getById,
-  TreinadorController.getById
+  TreinadorValidator.getByUsuario,
+  TreinadorController.getByUsuario
 );
 treinadorRouter.post(
   '/',
@@ -26,12 +26,12 @@ treinadorRouter.post(
   TreinadorController.create
 );
 treinadorRouter.put(
-  '/:id',
+  '/:usuario',
   TreinadorValidator.update,
   TreinadorController.update
 );
 treinadorRouter.delete(
-  '/:id',
+  '/:usuario',
   TreinadorValidator.delete,
   TreinadorController.delete
 );

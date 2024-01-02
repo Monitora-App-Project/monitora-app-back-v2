@@ -1,5 +1,5 @@
-const UsuarioModel = require('../models/Usuario');
-require('dotenv').config();
+const UsuarioModel = require("../models/Usuario");
+require("dotenv").config();
 
 function gerarMatricula() {
   const anoAtual = new Date().getFullYear();
@@ -11,22 +11,22 @@ function gerarMatricula() {
 
 function defineUsuarioSecret(tipo) {
   switch (tipo) {
-    case ('admin') :
+    case "admin":
       return process.env.ADMIN_SECRET;
 
-    case ('coordenador') :
-       return process.env.COORDENADOR_SECRET;
+    case "coordenador":
+      return process.env.COORDENADOR_SECRET;
 
-    case ('analista') :
+    case "analista":
       return process.env.ANALISTA_SECRET;
 
-    case ('treinador') :
+    case "treinador":
       return process.env.TREINADOR_SECRET;
 
-    case ('atleta') :
+    case "atleta":
       return process.env.ATLETA_SECRET;
 
-    default :
+    default:
       break;
   }
 }
@@ -36,13 +36,16 @@ module.exports = {
     try {
       const usuario = request.body;
       usuario.matricula = gerarMatricula();
+      while (await UsuarioModel.verificaMatriculaExiste(usuario.matricula)) {
+        usuario.matricula = gerarMatricula();
+      }
       usuario.tipo = defineUsuarioSecret(usuario.tipo);
       await UsuarioModel.create(usuario);
-      return response.status(201).json({ matricula: usuario.matricula });
+      return { matricula: usuario.matricula };
     } catch (err) {
       console.error(`Usuario creation failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -54,7 +57,7 @@ module.exports = {
     } catch (err) {
       console.error(`Usuario getAll failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -67,7 +70,7 @@ module.exports = {
     } catch (err) {
       console.error(`Usuario getById failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -80,7 +83,7 @@ module.exports = {
     } catch (err) {
       console.error(`Usuario getByUsuario failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -93,11 +96,11 @@ module.exports = {
       if (stillExistFieldsToUpdate) {
         await UsuarioModel.updateById(matricula, usuario);
       }
-      return response.status(200).json('OK');
+      return response.status(200).json("OK");
     } catch (err) {
       console.error(`Usuario update failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -110,8 +113,8 @@ module.exports = {
     } catch (err) {
       console.error(`Usuario delete failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
-  },
+  }
 };

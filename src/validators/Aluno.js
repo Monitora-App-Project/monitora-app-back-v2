@@ -42,8 +42,10 @@ module.exports = {
       meioTransporte: Joi.string().valid("Onibus", "Carro", "Moto", "Bicicleta", "Ape").required(),
       placaOuLinha: Joi.string().max(50),
       dataCadastro: Joi.date().required(),
-      cref: Joi.number().integer().required(),
-      modalidade: Joi.string().uuid().required(),
+      curso: Joi.string().required(),
+      matricula_ufmg: Joi.number().required(),
+      nivel: Joi.valid("Graduação", "Mestrado", "Doutorado", "Pós-Doc").required(),
+      orientador: Joi.number().required(),
       responsavel: Joi.number().required()
     })
   }),
@@ -99,8 +101,10 @@ module.exports = {
       meioTransporte: Joi.string().valid("Onibus", "Carro", "Moto", "Bicicleta", "Ape").optional(),
       placaOuLinha: Joi.string().max(50).optional(),
       dataCadastro: Joi.date().optional(),
-      cref: Joi.number().integer().optional(),
-      modalidade: Joi.string().uuid().optional(),
+      curso: Joi.string().optional(),
+      matricula_ufmg: Joi.number().optional(),
+      nivel: Joi.valid("Graduação", "Mestrado", "Doutorado", "Pós-Doc").optional(),
+      orientador: Joi.number().optional(),
       responsavel: Joi.number().required(),
       motivo: Joi.string().allow("").required()
     })

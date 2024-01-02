@@ -2,7 +2,7 @@ exports.up = function(knex) {
   return knex.schema.createTable("resultadoCompeticao", (table) => {
     table.uuid("id").primary().unique().notNullable();
     table.uuid("modalidade").notNullable();
-    table.uuid("atleta").notNullable();
+    table.integer("atleta").notNullable();
     table.string("nome").notNullable();
     table.enum("abrangencia", 
       ["Municipal", "Estadual", "Regional", "Nacional", "Internacional"]).notNullable();
@@ -20,8 +20,8 @@ exports.up = function(knex) {
 
     table
     .foreign("atleta")
-    .references("id")
-    .inTable("atleta")
+    .references("matricula")
+    .inTable("usuario")
     .onDelete("cascade");
 
     table

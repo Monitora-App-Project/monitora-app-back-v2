@@ -1,6 +1,5 @@
 exports.up = function(knex) {
   return knex.schema.createTable("professor", (table) => {
-    table.uuid("id").primary().unique().notNullable();
     table.integer("usuario").notNullable();
     table.string("departamento").notNullable();
     table.integer("matricula_ufmg").notNullable();

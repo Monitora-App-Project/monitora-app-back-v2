@@ -1,71 +1,68 @@
-const connection = require('../database/connection');
+const connection = require("../database/connection");
 
 module.exports = {
   async create(cmj) {
-    const result = await connection('cmj').insert(cmj);
+    const result = await connection("cmj").insert(cmj);
     return result;
   },
 
   async getAll() {
-    const result = await connection('cmj')
-    .select(
-      'cmj.*',
-      'teste.horaDaColeta',
-      'teste.matriculaAtleta',
-      'teste.idModalidade',
-      'teste.idTipoTeste',
-      'teste.idade',
-    )
-    .innerJoin('teste', 'cmj.idTeste', 'teste.id');
+    const result = await connection("cmj")
+      .select(
+        "cmj.*",
+        "teste.horaDaColeta",
+        "teste.matriculaAtleta",
+        "teste.idModalidade",
+        "teste.idTipoTeste",
+        "teste.idade"
+      )
+      .innerJoin("teste", "cmj.idTeste", "teste.id");
     return result;
   },
 
   async getByTeste(idTeste) {
-    const result = await connection('cmj')
+    const result = await connection("cmj")
       .select(
-        'cmj.*',
-        'teste.horaDaColeta',
-        'teste.matriculaAtleta',
-        'teste.idModalidade',
-        'teste.idTipoTeste',
-        'teste.idade',
+        "cmj.*",
+        "teste.horaDaColeta",
+        "teste.matriculaAtleta",
+        "teste.idModalidade",
+        "teste.idTipoTeste",
+        "teste.idade"
       )
-      .innerJoin('teste', 'cmj.idTeste', 'teste.id')
+      .innerJoin("teste", "cmj.idTeste", "teste.id")
       .where({ idTeste });
     return result;
   },
-  
 
   async updateByTeste(idTeste, cmj) {
-    const result = await connection('cmj')
-      .where({ idTeste })
-      .update(cmj);
+    const result = await connection("cmj").where({ idTeste }).update(cmj);
     return result;
   },
 
   async deleteByTeste(idTeste) {
-    const result = await connection('cmj').where({ idTeste }).delete();
+    const result = await connection("cmj").where({ idTeste }).delete();
     return result;
   },
 
   async getByFields(fields) {
-    const result = await connection('cmj')
-    .select('cmj.*', 'teste.*')
-    .innerJoin('teste', 'cmj.idTeste', 'teste.id')
-    .where(fields);
+    const result = await connection("cmj")
+      .select("cmj.*", "teste.*")
+      .innerJoin("teste", "cmj.idTeste", "teste.id")
+      .where(fields);
     return result;
   },
 
   async getByDate(fields) {
-    const result = await connection('cmj')
-    .select('cmj.*', 'teste.*')
-    .innerJoin('teste', 'cmj.idTeste', 'teste.id')
-    .where(builder => {
-      if (fields.dataColetaMin && fields.dataColetaMax) {
-        builder.whereBetween('horaDaColeta', [fields.dataColetaMin, fields.dataColetaMax]);
-      }
-    });
-  
+    const result = await connection("cmj")
+      .select("cmj.*", "teste.*")
+      .innerJoin("teste", "cmj.idTeste", "teste.id")
+      .where((builder) => {
+        if (fields.dataColetaMin && fields.dataColetaMax) {
+          builder.whereBetween("horaDaColeta", [fields.dataColetaMin, fields.dataColetaMax]);
+        }
+      });
+
     return result;
   }
 };

@@ -1,10 +1,9 @@
-const ProfessorModel = require("../models/Professor");
 const AlunoModel = require("../models/Aluno");
 const UsuarioController = require("./Usuario");
 const OcorrenciasModel = require("../models/Ocorrencias");
 const LogsModel = require("../models/Logs");
 const UsuarioModel = require("../models/Usuario");
-const { atributosProfessor, atributosUsuario } = require("../utils/atributos");
+const { atributosAluno, atributosUsuario } = require("../utils/atributos");
 const { v4: uuidv4 } = require("uuid");
 require("dotenv").config();
 
@@ -35,27 +34,27 @@ module.exports = {
     try {
       const requestData = request.body;
 
-      // Separar os dados do professor e do Usuario usando desestruturação
-      const { departamento, matricula_ufmg, nivel, equipe, responsavel, ...dadosUsuario } = requestData;
+      // Separar os dados do aluno e do Usuario usando desestruturação
+      const { curso, matricula_ufmg, nivel, orientador, responsavel, ...dadosUsuario } = requestData;
 
-      const dadosProfessor = {
-        departamento,
+      const dadosAluno = {
+        curso,
         matricula_ufmg,
         nivel,
-        equipe,
+        orientador,
         responsavel
       };
 
-      const responsavelColeta = dadosProfessor.responsavel;
-      delete dadosProfessor.responsavel;
+      const responsavelColeta = dadosAluno.responsavel;
+      delete dadosAluno.responsavel;
       const usuario = await UsuarioController.create({ body: dadosUsuario });
 
       try {
-        dadosProfessor.usuario = usuario.matricula;
-        await ProfessorModel.create(dadosProfessor);
+        dadosAluno.usuario = usuario.matricula;
+        await AlunoModel.create(dadosAluno);
       } catch (err) {
         await UsuarioModel.deleteById(usuario.matricula);
-        console.error(`Professor creation failed: ${err}`);
+        console.error(`Aluno creation failed: ${err}`);
         return response.status(500).json({
           notification: "Internal server error"
         });
@@ -65,57 +64,14 @@ module.exports = {
       log.id = uuidv4();
       log.responsavel = responsavelColeta;
       log.data = new Date();
-      log.nomeTabela = "professor";
-      log.tabelaId = dadosProfessor.usuario;
+      log.nomeTabela = "aluno";
+      log.tabelaId = dadosAluno.usuario;
       log.tipoAlteracao = "Create";
       await LogsModel.create(log);
 
-      return response.status(201).json({ matricula: dadosProfessor.usuario });
+      return response.status(201).json({ matricula: dadosAluno.usuario });
     } catch (err) {
-      console.error(`Professor creation failed: ${err}`);
-      return response.status(500).json({
-        notification: "Internal server error"
-      });
-    }
-  },
-
-  async createFromAluno(request, response) {
-    try {
-      const { usuario } = request.params;
-      const requestData = request.body;
-
-      const responsavel = requestData.responsavel;
-      const log = {};
-      log.id = uuidv4();
-      log.responsavel = responsavel;
-      log.data = new Date();
-      log.nomeTabela = "professor";
-      log.tipoAlteracao = "Create";
-
-      delete requestData.responsavel;
-
-      const { atributo } = await AlunoModel.getAtributoByUsuario(usuario, "matricula_ufmg");
-      requestData.matricula_ufmg = atributo;
-      requestData.usuario = usuario;
-      log.tabelaId = requestData.usuario;
-
-      await ProfessorModel.create(requestData);
-      await LogsModel.create(log);
-
-      const log_aluno = {};
-      log_aluno.id = uuidv4();
-      log_aluno.responsavel = responsavel;
-      log_aluno.data = new Date();
-      log_aluno.tabelaId = usuario;
-      log_aluno.nomeTabela = "aluno";
-      log_aluno.tipoAlteracao = "Delete";
-      log_aluno.motivo = "Foi promovido a professor";
-      await AlunoModel.deleteByUsuario(usuario);
-      await LogsModel.create(log_aluno);
-
-      return response.status(201).json({ notification: "Professor criado com sucesso!" });
-    } catch (err) {
-      console.error(`Professor creation failed: ${err}`);
+      console.error(`Aluno creation failed: ${err}`);
       return response.status(500).json({
         notification: "Internal server error"
       });
@@ -124,10 +80,10 @@ module.exports = {
 
   async getAll(request, response) {
     try {
-      const result = await ProfessorModel.getAll();
+      const result = await AlunoModel.getAll();
       return response.status(200).json(result);
     } catch (err) {
-      console.error(`Professor getAll failed: ${err}`);
+      console.error(`Aluno getAll failed: ${err}`);
       return response.status(500).json({
         notification: "Internal server error"
       });
@@ -137,10 +93,10 @@ module.exports = {
   async getByUsuario(request, response) {
     try {
       const { usuario } = request.params;
-      const result = await ProfessorModel.getByUsuario(usuario);
+      const result = await AlunoModel.getByUsuario(usuario);
       return response.status(200).json(result);
     } catch (err) {
-      console.error(`Professor getByUsuario failed: ${err}`);
+      console.error(`Aluno getByUsuario failed: ${err}`);
       return response.status(500).json({
         notification: "Internal server error"
       });
@@ -150,10 +106,10 @@ module.exports = {
   async getByFields(request, response) {
     try {
       const fields = request.body;
-      const result = await ProfessorModel.getByFields(fields);
+      const result = await AlunoModel.getByFields(fields);
       return response.status(200).json(result);
     } catch (err) {
-      console.error(`Professor getByFields failed: ${err}`);
+      console.error(`Aluno getByFields failed: ${err}`);
       return response.status(500).json({
         notification: "Internal server error"
       });
@@ -165,14 +121,14 @@ module.exports = {
       const { usuario } = request.params;
       const dataToUpdate = request.body;
 
-      const professorKeys = atributosProfessor;
+      const alunoKeys = atributosAluno;
       const usuarioKeys = atributosUsuario;
 
-      const professorFieldsToUpdate = Object.keys(dataToUpdate).filter((key) => professorKeys.includes(key));
+      const alunoFieldsToUpdate = Object.keys(dataToUpdate).filter((key) => alunoKeys.includes(key));
       const usuarioFieldsToUpdate = Object.keys(dataToUpdate).filter((key) => usuarioKeys.includes(key));
 
       const log = {};
-      log.nomeTabela = "professor";
+      log.nomeTabela = "aluno";
       log.responsavel = dataToUpdate.responsavel;
       log.data = new Date();
       log.tabelaId = usuario;
@@ -188,21 +144,21 @@ module.exports = {
       delete dataToUpdate.responsavel;
       delete dataToUpdate.motivo;
 
-      if (professorFieldsToUpdate.length > 0) {
-        const professorDataToUpdate = professorFieldsToUpdate.reduce((obj, key) => {
+      if (alunoFieldsToUpdate.length > 0) {
+        const alunoDataToUpdate = alunoFieldsToUpdate.reduce((obj, key) => {
           obj[key] = dataToUpdate[key];
           return obj;
         }, {});
-        const atributos = Object.keys(professorDataToUpdate);
-        const valoresNovos = Object.values(professorDataToUpdate);
+        const atributos = Object.keys(alunoDataToUpdate);
+        const valoresNovos = Object.values(alunoDataToUpdate);
         log.id = uuidv4();
         log.atributo = atributos.join(",");
-        const professorAtual = await ProfessorModel.getByUsuario(usuario);
-        const valoresAntigos = Object.fromEntries(atributos.map((chave) => [chave, professorAtual[chave]]));
+        const alunoAtual = await AlunoModel.getByUsuario(usuario);
+        const valoresAntigos = Object.fromEntries(atributos.map((chave) => [chave, alunoAtual[chave]]));
         const valoresAntigosValues = Object.values(valoresAntigos);
         log.valorAntigo = valoresAntigosValues.join(",");
         log.novoValor = valoresNovos.join(",");
-        await ProfessorModel.updateByUsuario(usuario, professorDataToUpdate);
+        await AlunoModel.updateByUsuario(usuario, alunoDataToUpdate);
         await LogsModel.create(log);
       }
 
@@ -247,7 +203,7 @@ module.exports = {
         }
       }
 
-      if (professorFieldsToUpdate.length === 0 && usuarioFieldsToUpdate.length === 0) {
+      if (alunoFieldsToUpdate.length === 0 && usuarioFieldsToUpdate.length === 0) {
         return response.status(200).json("Não há dados para serem alterados");
       }
 
@@ -264,14 +220,14 @@ module.exports = {
     try {
       const { usuario } = request.params;
       const logData = request.body;
-      await ProfessorModel.deleteByUsuario(usuario);
+      await AlunoModel.deleteByUsuario(usuario);
       await UsuarioModel.deleteById(usuario);
 
       const log = {};
       log.id = uuidv4();
       log.responsavel = logData.responsavel;
       log.data = new Date();
-      log.nomeTabela = "professor";
+      log.nomeTabela = "aluno";
       log.tabelaId = usuario;
       log.tipoAlteracao = "Delete";
       log.motivo = logData.motivo;
@@ -279,7 +235,7 @@ module.exports = {
 
       return response.status(200).json("OK");
     } catch (err) {
-      console.error(`Professor delete failed: ${err}`);
+      console.error(`Aluno delete failed: ${err}`);
       return response.status(500).json({
         notification: "Internal server error"
       });

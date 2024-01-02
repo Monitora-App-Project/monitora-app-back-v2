@@ -1,24 +1,24 @@
-const composicaoCorporalModel = require('../models/ComposicaoCorporal');
-const TesteModel = require('../models/Teste');
-const LogsModel = require('../models/Logs');
+const composicaoCorporalModel = require("../models/ComposicaoCorporal");
+const TesteModel = require("../models/Teste");
+const LogsModel = require("../models/Logs");
 
-const {pegaModalidade, calculaIdade, calcularMedia} = require('../utilities');
-const { v4: uuidv4 } = require('uuid');
+const { pegaModalidade, calculaIdade, calcularMedia } = require("../utils/utilities");
+const { v4: uuidv4 } = require("uuid");
 
-require('dotenv').config();
+require("dotenv").config();
 
 const idTipoTeste = 1;
 
 module.exports = {
   async create(request, response) {
     try {
-      // Salva informacoes 
-      const compCorp = request.body;      
+      // Salva informacoes
+      const compCorp = request.body;
       const matriculaAtleta = compCorp.matriculaAtleta;
       const responsavel = compCorp.responsavel;
       delete compCorp.matriculaAtleta;
       delete compCorp.responsavel;
-      const id = uuidv4(); 
+      const id = uuidv4();
       const timestamp = new Date();
 
       // Informacoes que precisam de media
@@ -42,10 +42,10 @@ module.exports = {
       const valoresDcAbdominal = [compCorp.dcAbdominal1, compCorp.dcAbdominal2, compCorp.dcAbdominal3];
       const valoresDcSuprailiaca = [compCorp.dcSuprailiaca1, compCorp.dcSuprailiaca2, compCorp.dcSuprailiaca3];
       const valoresDcCoxa = [compCorp.dcCoxa1, compCorp.dcCoxa2, compCorp.dcCoxa3];
-      const valoresDcPant = [compCorp.dcPant1, compCorp.dcPant2, compCorp.dcPant3]; 
+      const valoresDcPant = [compCorp.dcPant1, compCorp.dcPant2, compCorp.dcPant3];
 
       // Cria teste geral
-      const teste = {};              
+      const teste = {};
       teste.id = id;
       teste.horaDaColeta = timestamp;
       teste.matriculaAtleta = matriculaAtleta;
@@ -78,35 +78,35 @@ module.exports = {
       compCorp.mediaDcCoxa = calcularMedia(valoresDcCoxa);
       compCorp.mediaDcPant = calcularMedia(valoresDcPant);
 
-      compCorp.somaSeteDobras = compCorp.mediaDcPeitoral 
-                                + compCorp.mediaDcAxilar
-                                + compCorp.mediaDcTriceps
-                                + compCorp.mediaDcSubescapular
-                                + compCorp.mediaDcAbdominal
-                                + compCorp.mediaDcSuprailiaca
-                                + compCorp.mediaDcCoxa;
+      compCorp.somaSeteDobras =
+        compCorp.mediaDcPeitoral +
+        compCorp.mediaDcAxilar +
+        compCorp.mediaDcTriceps +
+        compCorp.mediaDcSubescapular +
+        compCorp.mediaDcAbdominal +
+        compCorp.mediaDcSuprailiaca +
+        compCorp.mediaDcCoxa;
       compCorp.quadradoSoma = compCorp.somaSeteDobras ^ 2;
-      compCorp.densidade = (1.112-(0.00043499*compCorp.somaSeteDobras)
-                            + (0.00000055*compCorp.quadradoSoma)
-                            - (0.00028826*36));
-        
-      await HooperModel.create(compCorp);     // O restante dos dados a esta no objeto hooper
+      compCorp.densidade =
+        1.112 - 0.00043499 * compCorp.somaSeteDobras + 0.00000055 * compCorp.quadradoSoma - 0.00028826 * 36;
+
+      await HooperModel.create(compCorp); // O restante dos dados a esta no objeto hooper
 
       // Cria log de Create
-      const log = {};                // JSON que guarda os dados a serem inseridos no log
+      const log = {}; // JSON que guarda os dados a serem inseridos no log
       log.id = uuidv4();
-      log.responsavel = responsavel;  
-      log.data = timestamp;          
+      log.responsavel = responsavel;
+      log.data = timestamp;
       log.nomeTabela = "Hooper";
-      log.tabelaId = id;             
+      log.tabelaId = id;
       log.tipoAlteracao = "Create";
-      await LogsModel.create(log); 
+      await LogsModel.create(log);
 
-      return response.status(201).json({ id: hooper.idTeste, horaDaColeta : timestamp });
+      return response.status(201).json({ id: hooper.idTeste, horaDaColeta: timestamp });
     } catch (err) {
       console.error(`Hooper creation failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -118,7 +118,7 @@ module.exports = {
     } catch (err) {
       console.error(`CMJ getAll failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -131,7 +131,7 @@ module.exports = {
     } catch (err) {
       console.error(`Hooper getByFields failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -144,7 +144,7 @@ module.exports = {
     } catch (err) {
       console.error(`Hooper getByTeste failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -157,7 +157,7 @@ module.exports = {
     } catch (err) {
       console.error(`Hooper getByDate failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -177,9 +177,7 @@ module.exports = {
       const valoresNovos = Object.values(hooperUpdate);
 
       const hooperAtual = await HooperModel.getByTeste(idTeste);
-      const valoresAntigos = Object.fromEntries(
-        atributos.map(chave => [chave, hooperAtual[0][chave]])
-      );
+      const valoresAntigos = Object.fromEntries(atributos.map((chave) => [chave, hooperAtual[0][chave]]));
       const valoresAntigosValues = Object.values(valoresAntigos);
 
       // Da o Update
@@ -188,25 +186,25 @@ module.exports = {
         await HooperModel.updateByTeste(idTeste, hooperUpdate);
       }
 
-      // Cria log 
-      const log = {};          
+      // Cria log
+      const log = {};
       log.id = uuidv4();
       log.responsavel = responsavel;
-      log.data = timestamp;          
+      log.data = timestamp;
       log.nomeTabela = "Hooper";
-      log.tabelaId = idTeste;             
+      log.tabelaId = idTeste;
       log.tipoAlteracao = "Update";
-      log.atributo = atributos.join(',');
-      log.valorAntigo = valoresAntigosValues.join(',');
-      log.novoValor = valoresNovos.join(',');
+      log.atributo = atributos.join(",");
+      log.valorAntigo = valoresAntigosValues.join(",");
+      log.novoValor = valoresNovos.join(",");
       log.motivo = motivo;
       await LogsModel.create(log);
-      
-      return response.status(200).json('OK');
+
+      return response.status(200).json("OK");
     } catch (err) {
       console.error(`Hooper update failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -219,16 +217,16 @@ module.exports = {
       const motivo = hooperDelete.motivo;
       const timestamp = new Date();
 
-      // Cria log 
-      const log = {};          
+      // Cria log
+      const log = {};
       log.id = uuidv4();
       log.responsavel = responsavel;
-      log.data = timestamp;          
+      log.data = timestamp;
       log.nomeTabela = "Hooper";
-      log.tabelaId = idTeste;             
+      log.tabelaId = idTeste;
       log.tipoAlteracao = "Delete";
       log.motivo = motivo;
-     
+
       await HooperModel.deleteByTeste(idTeste);
       await TesteModel.deleteById(idTeste);
       await LogsModel.create(log);
@@ -236,9 +234,8 @@ module.exports = {
     } catch (err) {
       console.error(`Hooper delete failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
-  },
-
+  }
 };

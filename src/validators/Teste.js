@@ -1,4 +1,4 @@
-const { celebrate, Segments, Joi } = require('celebrate');
+const { celebrate, Segments, Joi } = require("celebrate");
 
 module.exports = {
   create: celebrate({
@@ -7,16 +7,16 @@ module.exports = {
       idTipoTeste: Joi.number().integer().required()
     })
   }),
-  
+
   getById: celebrate({
     [Segments.PARAMS]: Joi.object().keys({
-      id: Joi.string().guid({version: 'uuidv4'}).required(),
-    }),
+      id: Joi.string().guid({ version: "uuidv4" }).required()
+    })
   }),
 
   delete: celebrate({
     [Segments.PARAMS]: Joi.object().keys({
-      id: Joi.string().guid({version: 'uuidv4'}).required(),
-    }),
+      id: Joi.string().guid({ version: "uuidv4" }).required()
+    })
   })
 };

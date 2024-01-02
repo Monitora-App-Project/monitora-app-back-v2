@@ -1,17 +1,17 @@
-const LogsModel = require("../models/Logs");
+const OcorrenciasModel = require("../models/Ocorrencias");
 const { v4: uuidv4 } = require("uuid");
 require("dotenv").config();
 
 module.exports = {
   async create(request, response) {
     try {
-      const log = request.body;
-      log.id = uuidv4();
+      const ocorrencia = request.body;
+      ocorrencia.id = uuidv4();
 
-      await LogsModel.create(log);
-      return response.status(201).json({ id: log.id });
+      await OcorrenciasModel.create(ocorrencia);
+      return response.status(201).json({ id: ocorrencia.id });
     } catch (err) {
-      console.error(`Log creation failed: ${err}`);
+      console.error(`Ocorrencia creation failed: ${err}`);
       return response.status(500).json({
         notification: "Internal server error"
       });
@@ -20,10 +20,10 @@ module.exports = {
 
   async getAll(request, response) {
     try {
-      const result = await LogsModel.getAll();
+      const result = await OcorrenciasModel.getAll();
       return response.status(200).json(result);
     } catch (err) {
-      console.error(`Logs getAll failed: ${err}`);
+      console.error(`Ocorrencias getAll failed: ${err}`);
       return response.status(500).json({
         notification: "Internal server error"
       });
@@ -33,10 +33,10 @@ module.exports = {
   async getByResponsavel(request, response) {
     try {
       const { responsavel } = request.params;
-      const result = await LogsModel.getByResponsavel(responsavel);
+      const result = await OcorrenciasModel.getByResponsavel(responsavel);
       return response.status(200).json(result);
     } catch (err) {
-      console.error(`Log getByResponsavel failed: ${err}`);
+      console.error(`Ocorrencia getByResponsavel failed: ${err}`);
       return response.status(500).json({
         notification: "Internal server error"
       });
@@ -46,10 +46,10 @@ module.exports = {
   async getById(request, response) {
     try {
       const { id } = request.params;
-      const result = await LogsModel.getById(id);
+      const result = await OcorrenciasModel.getById(id);
       return response.status(200).json(result);
     } catch (err) {
-      console.error(`Log getById failed: ${err}`);
+      console.error(`Ocorrencia getById failed: ${err}`);
       return response.status(500).json({
         notification: "Internal server error"
       });
@@ -59,10 +59,10 @@ module.exports = {
   async getByFields(request, response) {
     try {
       const fields = request.body;
-      const result = await LogsModel.getByFields(fields);
+      const result = await OcorrenciasModel.getByFields(fields);
       return response.status(200).json(result);
     } catch (err) {
-      console.error(`Log getByFields failed: ${err}`);
+      console.error(`Ocorrencia getByFields failed: ${err}`);
       return response.status(500).json({
         notification: "Internal server error"
       });
@@ -72,14 +72,14 @@ module.exports = {
   async update(request, response) {
     try {
       const { id } = request.params;
-      const log = request.body;
-      const stillExistFieldsToUpdate = Object.values(log).length > 0;
+      const ocorrencia = request.body;
+      const stillExistFieldsToUpdate = Object.values(ocorrencia).length > 0;
       if (stillExistFieldsToUpdate) {
-        await LogsModel.updateById(id, log);
+        await OcorrenciasModel.updateById(id, ocorrencia);
       }
       return response.status(200).json("OK");
     } catch (err) {
-      console.error(`Log update failed: ${err}`);
+      console.error(`Ocorrencia update failed: ${err}`);
       return response.status(500).json({
         notification: "Internal server error"
       });
@@ -89,10 +89,10 @@ module.exports = {
   async delete(request, response) {
     try {
       const { id } = request.params;
-      await LogsModel.deleteById(id);
+      await OcorrenciasModel.deleteById(id);
       return response.status(200).json("OK");
     } catch (err) {
-      console.error(`Log delete failed: ${err}`);
+      console.error(`Ocorrencia delete failed: ${err}`);
       return response.status(500).json({
         notification: "Internal server error"
       });

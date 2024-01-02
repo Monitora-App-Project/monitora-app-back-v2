@@ -1,6 +1,6 @@
-const ModalidadeModel = require('../models/Modalidade');
-const { v4: uuidv4 } = require('uuid');
-require('dotenv').config();
+const ModalidadeModel = require("../models/Modalidade");
+const { v4: uuidv4 } = require("uuid");
+require("dotenv").config();
 
 module.exports = {
   async create(request, response) {
@@ -13,7 +13,7 @@ module.exports = {
     } catch (err) {
       console.error(`Modalidade creation failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -25,7 +25,7 @@ module.exports = {
     } catch (err) {
       console.error(`Modalidade getAll failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -38,7 +38,7 @@ module.exports = {
     } catch (err) {
       console.error(`Modalidade getById failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -51,11 +51,11 @@ module.exports = {
       if (stillExistFieldsToUpdate) {
         await ModalidadeModel.updateById(id, modalidade);
       }
-      return response.status(200).json('OK');
+      return response.status(200).json("OK");
     } catch (err) {
       console.error(`Modalidade update failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -68,8 +68,8 @@ module.exports = {
     } catch (err) {
       console.error(`Modalidade delete failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
-  },
+  }
 };

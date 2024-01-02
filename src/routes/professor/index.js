@@ -11,6 +11,11 @@ professorRouter.get('/',
   ProfessorController.getAll
 );
 professorRouter.get(
+  '/fields',
+  // ProfessorValidator.getAll,
+  ProfessorController.getByFields
+);
+professorRouter.get(
   '/:usuario',
   ProfessorValidator.getByUsuario,
   ProfessorController.getByUsuario
@@ -19,6 +24,11 @@ professorRouter.post(
   '/',
   ProfessorValidator.create,
   ProfessorController.create
+);
+professorRouter.post(
+  '/createFromAluno/:usuario',
+  ProfessorValidator.createFromAluno,
+  ProfessorController.createFromAluno
 );
 professorRouter.put(
   '/:usuario',

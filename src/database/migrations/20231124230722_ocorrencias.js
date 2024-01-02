@@ -3,7 +3,7 @@ exports.up = function(knex) {
     table.uuid("id").primary().unique().notNullable();
     table.integer("responsavel").notNullable();
     table.timestamp("data", { useTz: false }, { precision: 0 }).notNullable();
-    table.uuid("atleta").notNullable();
+    table.integer("usuarioModificado").notNullable();
     table.string("atributo").notNullable();
     table.string("valorAntigo").notNullable();
     table.string("novoValor").notNullable();
@@ -16,9 +16,9 @@ exports.up = function(knex) {
     .onDelete("cascade");
 
     table
-    .foreign("atleta")
-    .references("id")
-    .inTable("atleta")
+    .foreign("usuarioModificado")
+    .references("matricula")
+    .inTable("usuario")
     .onDelete("cascade");
   });
 };

@@ -1,29 +1,29 @@
-const TesteModel = require('../models/Teste');
+const TesteModel = require("../models/Teste");
 
-const {pegaModalidade, calculaIdade} = require('../utilities');
-const { v4: uuidv4 } = require('uuid');
+const { pegaModalidade, calculaIdade } = require("../utils/utilities");
+const { v4: uuidv4 } = require("uuid");
 
-require('dotenv').config();
+require("dotenv").config();
 
 module.exports = {
   async create(request, response) {
     try {
-      const teste = request.body;                         // Daqui vem matricula do atleta e tipo do teste    
-      const matriculaAtleta = teste.matriculaAtleta;      
+      const teste = request.body; // Daqui vem matricula do atleta e tipo do teste
+      const matriculaAtleta = teste.matriculaAtleta;
       const timestamp = new Date();
 
-      const id = uuidv4() 
+      const id = uuidv4();
       teste.id = id;
       teste.horaDaColeta = timestamp;
       teste.idModalidade = await pegaModalidade(matriculaAtleta);
-      teste.idade = await calculaIdade(matriculaAtleta); 
+      teste.idade = await calculaIdade(matriculaAtleta);
 
       await TesteModel.create(teste);
-      return response.status(201).json({horaDaColeta, id});
+      return response.status(201).json({ horaDaColeta, id });
     } catch (err) {
       console.error(`Teste creation failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -35,7 +35,7 @@ module.exports = {
     } catch (err) {
       console.error(`Teste getAll failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -48,7 +48,7 @@ module.exports = {
     } catch (err) {
       console.error(`Teste getById: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   },
@@ -61,9 +61,8 @@ module.exports = {
     } catch (err) {
       console.error(`Atleta delete failed: ${err}`);
       return response.status(500).json({
-        notification: 'Internal server error',
+        notification: "Internal server error"
       });
     }
   }
-
 };
