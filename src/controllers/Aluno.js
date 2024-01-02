@@ -49,8 +49,16 @@ module.exports = {
       delete dadosAluno.responsavel;
       const usuario = await UsuarioController.create({ body: dadosUsuario });
 
-      dadosAluno.usuario = usuario.matricula;
-      await AlunoModel.create(dadosAluno);
+      try {
+        dadosAluno.usuario = usuario.matricula;
+        await AlunoModel.create(dadosAluno);
+      } catch (err) {
+        await UsuarioModel.deleteById(usuario.matricula);
+        console.error(`Aluno creation failed: ${err}`);
+        return response.status(500).json({
+          notification: "Internal server error"
+        });
+      }
 
       const log = {};
       log.id = uuidv4();

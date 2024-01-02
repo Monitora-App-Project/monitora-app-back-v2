@@ -50,8 +50,16 @@ module.exports = {
       delete dadosProfessor.responsavel;
       const usuario = await UsuarioController.create({ body: dadosUsuario });
 
-      dadosProfessor.usuario = usuario.matricula;
-      await ProfessorModel.create(dadosProfessor);
+      try {
+        dadosProfessor.usuario = usuario.matricula;
+        await ProfessorModel.create(dadosProfessor);
+      } catch (err) {
+        await UsuarioModel.deleteById(usuario.matricula);
+        console.error(`Professor creation failed: ${err}`);
+        return response.status(500).json({
+          notification: "Internal server error"
+        });
+      }
 
       const log = {};
       log.id = uuidv4();
@@ -73,10 +81,10 @@ module.exports = {
 
   async createFromAluno(request, response) {
     try {
-      const { usuario } =  request.params;
+      const { usuario } = request.params;
       const requestData = request.body;
 
-      const responsavel = requestData.responsavel
+      const responsavel = requestData.responsavel;
       const log = {};
       log.id = uuidv4();
       log.responsavel = responsavel;

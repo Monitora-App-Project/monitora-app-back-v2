@@ -25,8 +25,16 @@ module.exports = {
       delete dadosTreinador.responsavel;
       const usuario = await UsuarioController.create({ body: dadosUsuario });
 
-      dadosTreinador.usuario = usuario.matricula;
-      await TreinadorModel.create(dadosTreinador);
+      try {
+        dadosTreinador.usuario = usuario.matricula;
+        await TreinadorModel.create(dadosTreinador);
+      } catch (err) {
+        await UsuarioModel.deleteById(usuario.matricula);
+        console.error(`Treinador creation failed: ${err}`);
+        return response.status(500).json({
+          notification: "Internal server error"
+        });
+      }
 
       const log = {};
       log.id = uuidv4();
@@ -177,7 +185,7 @@ module.exports = {
       const logData = request.body;
       await TreinadorModel.deleteByUsuario(usuario);
       await UsuarioModel.deleteById(usuario);
-      
+
       const log = {};
       log.id = uuidv4();
       log.responsavel = logData.responsavel;

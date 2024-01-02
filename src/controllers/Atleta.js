@@ -64,8 +64,16 @@ module.exports = {
       delete dadosAtleta.responsavel;
       const usuario = await UsuarioController.create({ body: dadosUsuario });
 
-      dadosAtleta.usuario = usuario.matricula;
-      await AtletaModel.create(dadosAtleta);
+      try {
+        dadosAtleta.usuario = usuario.matricula;
+        await AtletaModel.create(dadosAtleta);
+      } catch (err) {
+        await UsuarioModel.deleteById(usuario.matricula);
+        console.error(`Atleta creation failed: ${err}`);
+        return response.status(500).json({
+          notification: "Internal server error"
+        });
+      }
 
       const log = {};
       log.id = uuidv4();
