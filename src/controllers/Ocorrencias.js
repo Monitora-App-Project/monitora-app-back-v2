@@ -76,7 +76,7 @@ module.exports = {
       const stillExistFieldsToUpdate = Object.values(ocorrencia).length > 0;
       if (stillExistFieldsToUpdate) {
         await OcorrenciasModel.updateById(id, ocorrencia);
-      }
+      } else return response.status(200).json("Não há dados para serem alterados");
       return response.status(200).json("OK");
     } catch (err) {
       console.error(`Ocorrencia update failed: ${err}`);

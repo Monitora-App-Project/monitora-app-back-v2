@@ -76,7 +76,7 @@ module.exports = {
       const stillExistFieldsToUpdate = Object.values(log).length > 0;
       if (stillExistFieldsToUpdate) {
         await LogsModel.updateById(id, log);
-      }
+      } else return response.status(200).json("Não há dados para serem alterados");
       return response.status(200).json("OK");
     } catch (err) {
       console.error(`Log update failed: ${err}`);
