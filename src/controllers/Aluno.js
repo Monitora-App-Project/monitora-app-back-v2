@@ -4,30 +4,9 @@ const OcorrenciasModel = require("../models/Ocorrencias");
 const LogsModel = require("../models/Logs");
 const UsuarioModel = require("../models/Usuario");
 const { atributosAluno, atributosUsuario } = require("../utils/atributos");
+const { defineUsuarioSecret } = require("../utils/utilities");
 const { v4: uuidv4 } = require("uuid");
 require("dotenv").config();
-
-function defineUsuarioSecret(tipo) {
-  switch (tipo) {
-    case "admin":
-      return process.env.ADMIN_SECRET;
-
-    case "coordenador":
-      return process.env.COORDENADOR_SECRET;
-
-    case "analista":
-      return process.env.ANALISTA_SECRET;
-
-    case "treinador":
-      return process.env.TREINADOR_SECRET;
-
-    case "atleta":
-      return process.env.ATLETA_SECRET;
-
-    default:
-      break;
-  }
-}
 
 module.exports = {
   async create(request, response) {

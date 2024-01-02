@@ -1,4 +1,5 @@
 const UsuarioModel = require("../models/Usuario");
+const { defineUsuarioSecret, encryptData } = require("../utils/utilities");
 require("dotenv").config();
 
 function gerarMatricula() {
@@ -9,32 +10,11 @@ function gerarMatricula() {
   return matricula;
 }
 
-function defineUsuarioSecret(tipo) {
-  switch (tipo) {
-    case "admin":
-      return process.env.ADMIN_SECRET;
-
-    case "coordenador":
-      return process.env.COORDENADOR_SECRET;
-
-    case "analista":
-      return process.env.ANALISTA_SECRET;
-
-    case "treinador":
-      return process.env.TREINADOR_SECRET;
-
-    case "atleta":
-      return process.env.ATLETA_SECRET;
-
-    default:
-      break;
-  }
-}
-
 module.exports = {
   async create(request, response) {
     try {
       const usuario = request.body;
+      usuario.senha = encryptData(usuario.senha);
       usuario.matricula = gerarMatricula();
       while (await UsuarioModel.verificaMatriculaExiste(usuario.matricula)) {
         usuario.matricula = gerarMatricula();
