@@ -2,6 +2,11 @@ const { celebrate, Segments, Joi } = require("celebrate");
 
 module.exports = {
   create: celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(),
     [Segments.BODY]: Joi.object().keys({
       tipo: Joi.string().valid("admin", "coordenador", "analista", "treinador", "atleta").required(),
       email: Joi.string().email().required(),
@@ -65,13 +70,31 @@ module.exports = {
     })
   }),
 
+  getAll: celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown()
+  }),
+
   getByUsuario: celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(),
     [Segments.PARAMS]: Joi.object().keys({
       usuario: Joi.number().required()
     })
   }),
 
   update: celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(),
     [Segments.PARAMS]: Joi.object().keys({
       usuario: Joi.number().required()
     }),
@@ -142,6 +165,11 @@ module.exports = {
   }),
 
   delete: celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(),
     [Segments.PARAMS]: Joi.object().keys({
       usuario: Joi.number().required()
     }),

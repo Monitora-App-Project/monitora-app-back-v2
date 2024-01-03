@@ -2,11 +2,11 @@ const { celebrate, Segments, Joi } = require("celebrate");
 
 module.exports = {
   create: celebrate({
-    // [Segments.HEADERS]: Joi.object()
-    //   .keys({
-    //     authorization: Joi.string().required(),
-    //   })
-    //   .unknown(),
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required(),
+      })
+      .unknown(),
     [Segments.BODY]: Joi.object().keys({
       tipo: Joi.string().valid("admin", "coordenador", "analista", "treinador", "atleta").required(),
       email: Joi.string().email().required(),
@@ -50,31 +50,31 @@ module.exports = {
     })
   }),
 
-  // getAll: celebrate({
-  //   [Segments.HEADERS]: Joi.object()
-  //     .keys({
-  //       authorization: Joi.string().required(),
-  //     })
-  //     .unknown(),
-  //   }),
+  getAll: celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required(),
+      })
+      .unknown(),
+    }),
 
   getById: celebrate({
-    // [Segments.HEADERS]: Joi.object()
-    //   .keys({
-    //     authorization: Joi.string().required(),
-    //   })
-    //   .unknown(),
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required(),
+      })
+      .unknown(),
     [Segments.PARAMS]: Joi.object().keys({
       matricula: Joi.number().required()
     })
   }),
 
   update: celebrate({
-    // [Segments.HEADERS]: Joi.object()
-    //   .keys({
-    //     authorization: Joi.string().required(),
-    //   })
-    //   .unknown(),
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required(),
+      })
+      .unknown(),
     [Segments.PARAMS]: Joi.object().keys({
       matricula: Joi.number().required()
     }),
@@ -123,11 +123,11 @@ module.exports = {
   }),
 
   delete: celebrate({
-    // [Segments.HEADERS]: Joi.object()
-    //   .keys({
-    //     authorization: Joi.string().required(),
-    //   })
-    //   .unknown(),
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required(),
+      })
+      .unknown(),
     [Segments.PARAMS]: Joi.object().keys({
       matricula: Joi.number().required()
     })
