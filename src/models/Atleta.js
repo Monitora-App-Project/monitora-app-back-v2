@@ -38,5 +38,13 @@ module.exports = {
       .innerJoin("usuario", "atleta.usuario", "usuario.matricula")
       .where(fields);
     return result;
-  }
+  },
+
+  async getModalidadeAtleta(matricula) {
+    const result = await connection("atleta")
+      .select("modalidade")
+      .where('usuario', matricula);
+    return result;
+  },
+
 };

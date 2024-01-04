@@ -119,11 +119,10 @@ exports.up = function(knex) {
     table.float("quadradoSoma").notNullable();
     table.float("densidade").notNullable();
 
-    table.bool("cadeirante").notNullable();
-
     table.float("percentualGordura").notNullable();
     table.float("massaGorda").notNullable();
     table.float("massaIsentaDeGordura").notNullable();
+    table.text("observacao");
   
     table.foreign("idTeste")
       .references("id")

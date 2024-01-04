@@ -1,4 +1,5 @@
 const UsuarioModel = require("../models/Usuario");
+const AtletaModel = require("../models/Atleta");
 
 module.exports = {
   // Função para calcular a média (recebe um array com os valores)
@@ -35,7 +36,7 @@ module.exports = {
 
   async pegaModalidade(matriculaAtleta) {
     try {
-      const idModalidade = await UsuarioModel.getModalidadeAtleta(matriculaAtleta);
+      const idModalidade = await AtletaModel.getModalidadeAtleta(matriculaAtleta);
       return idModalidade[0].modalidade; // retorna o JSON dentro de uma array
     } catch (err) {
       console.error(`Consulta de modalidade falhou: ${err}`);
@@ -43,5 +44,18 @@ module.exports = {
         notification: "Internal server error"
       });
     }
-  }
+  },
+
+  async getCadeirante(matriculaAtleta) {
+    try{
+      const isCadeirante = await UsuarioModel.getCadeirante(matriculaAtleta);
+      console.log(isCadeirante);
+      return isCadeirante[0].cadeirante;
+    } catch (err) {
+      console.error(`Consulta de modalidade falhou: ${err}`);
+      return response.status(500).json({
+        notification: "Internal server error"
+      });
+    }
+  },
 };
