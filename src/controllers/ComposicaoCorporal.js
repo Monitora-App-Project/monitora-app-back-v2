@@ -178,25 +178,25 @@ module.exports = {
   async update(request, response) {
     try {
       const { idTeste } = request.params;
-      const hooperUpdate = request.body;
+      const compCorpUpdate = request.body;
 
       // Seta valores do log
-      const responsavel = hooperUpdate.responsavel;
-      const motivo = hooperUpdate.motivo;
-      delete hooperUpdate.responsavel;
-      delete hooperUpdate.motivo;
+      const responsavel = compCorpUpdate.responsavel;
+      const motivo = compCorpUpdate.motivo;
+      delete compCorpUpdate.responsavel;
+      delete compCorpUpdate.motivo;
       const timestamp = new Date();
-      const atributos = Object.keys(hooperUpdate);
-      const valoresNovos = Object.values(hooperUpdate);
+      const atributos = Object.keys(compCorpUpdate);
+      const valoresNovos = Object.values(compCorpUpdate);
 
-      const hooperAtual = await HooperModel.getByTeste(idTeste);
-      const valoresAntigos = Object.fromEntries(atributos.map((chave) => [chave, hooperAtual[0][chave]]));
+      const compCorpAtual = await ComposicaoCorporalModel.getByTeste(idTeste);
+      const valoresAntigos = Object.fromEntries(atributos.map((chave) => [chave, compCorpAtual[0][chave]]));
       const valoresAntigosValues = Object.values(valoresAntigos);
 
       // Da o Update
-      const stillExistFieldsToUpdate = Object.values(hooperUpdate).length > 0;
+      const stillExistFieldsToUpdate = Object.values(compCorpUpdate).length > 0;
       if (stillExistFieldsToUpdate) {
-        await HooperModel.updateByTeste(idTeste, hooperUpdate);
+        await ComposicaoCorporalModel.updateByTeste(idTeste, compCorpUpdate);
       }
 
       // Cria log
@@ -204,7 +204,7 @@ module.exports = {
       log.id = uuidv4();
       log.responsavel = responsavel;
       log.data = timestamp;
-      log.nomeTabela = "Hooper";
+      log.nomeTabela = "composicaoCorporal";
       log.tabelaId = idTeste;
       log.tipoAlteracao = "Update";
       log.atributo = atributos.join(",");
@@ -215,7 +215,7 @@ module.exports = {
 
       return response.status(200).json("OK");
     } catch (err) {
-      console.error(`Hooper update failed: ${err}`);
+      console.error(`Composicao Corporal update failed: ${err}`);
       return response.status(500).json({
         notification: "Internal server error"
       });
@@ -225,9 +225,9 @@ module.exports = {
   async delete(request, response) {
     try {
       const { idTeste } = request.params;
-      const hooperDelete = request.body;
-      const responsavel = hooperDelete.responsavel;
-      const motivo = hooperDelete.motivo;
+      const compCorpDelete = request.body;
+      const responsavel = compCorpDelete.responsavel;
+      const motivo = compCorpDelete.motivo;
       const timestamp = new Date();
 
       // Cria log
@@ -235,17 +235,17 @@ module.exports = {
       log.id = uuidv4();
       log.responsavel = responsavel;
       log.data = timestamp;
-      log.nomeTabela = "Hooper";
+      log.nomeTabela = "composicaoCorporal";
       log.tabelaId = idTeste;
       log.tipoAlteracao = "Delete";
       log.motivo = motivo;
 
-      await HooperModel.deleteByTeste(idTeste);
+      await ComposicaoCorporalModel.deleteByTeste(idTeste);
       await TesteModel.deleteById(idTeste);
       await LogsModel.create(log);
       return response.status(200).json("OK");
     } catch (err) {
-      console.error(`Hooper delete failed: ${err}`);
+      console.error(`Composicao Corporal delete failed: ${err}`);
       return response.status(500).json({
         notification: "Internal server error"
       });

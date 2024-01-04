@@ -29,15 +29,15 @@ compCorpRouter.get(
   compCorpValidator.getByTeste,
   compCorpController.getByTeste
 );
-// compCorpRouter.put(
-//   '/:idTeste',
-//   compCorpValidator.update,
-//   compCorpController.update
-// );
-// compCorpRouter.delete(
-//   '/:idTeste',
-//   compCorpValidator.delete,
-//   compCorpController.delete
-// );
+compCorpRouter.put(
+  '/:idTeste',
+  compCorpValidator.update,
+  compCorpController.update
+);
+compCorpRouter.delete(
+  '/:idTeste',
+  compCorpValidator.delete,
+  compCorpController.delete
+);
 
 module.exports = compCorpRouter;
