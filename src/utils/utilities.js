@@ -48,10 +48,9 @@ module.exports = {
   async getCadeirante(matriculaAtleta) {
     try{
       const isCadeirante = await UsuarioModel.getCadeirante(matriculaAtleta);
-      console.log(isCadeirante);
       return isCadeirante[0].cadeirante;
     } catch (err) {
-      console.error(`Consulta de modalidade falhou: ${err}`);
+      console.error(`Consulta de isCadeirante falhou: ${err}`);
       return response.status(500).json({
         notification: "Internal server error"
       });
