@@ -105,8 +105,6 @@ module.exports = {
     }
   },
 
-  },
-
   defineUsuarioSecret: (tipo) => {
     switch (tipo) {
       case "admin":
