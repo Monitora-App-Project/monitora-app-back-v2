@@ -2,6 +2,11 @@ const { celebrate, Segments, Joi } = require("celebrate");
 
 module.exports = {
   create: celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(),
     [Segments.BODY]: Joi.object().keys({
       matriculaAtleta: Joi.number().required(),
       cmj1: Joi.number().required(),
@@ -12,13 +17,31 @@ module.exports = {
     })
   }),
 
+  getAll: celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown()
+  }),
+
   getByTeste: celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(),
     [Segments.PARAMS]: Joi.object().keys({
       idTeste: Joi.string().guid({ version: "uuidv4" }).required()
     })
   }),
 
   update: celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(),
     [Segments.PARAMS]: Joi.object().keys({
       idTeste: Joi.string().guid({ version: "uuidv4" }).required()
     }),
@@ -33,6 +56,11 @@ module.exports = {
   }),
 
   delete: celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(),
     [Segments.PARAMS]: Joi.object().keys({
       idTeste: Joi.string().guid({ version: "uuidv4" }).required()
     }),

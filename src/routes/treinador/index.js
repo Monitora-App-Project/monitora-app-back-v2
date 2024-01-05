@@ -18,7 +18,7 @@ treinadorRouter.get(
   TreinadorController.getByFields
 );
 treinadorRouter.get(
-  '/:id',
+  '/:usuario',
   TreinadorValidator.getByUsuario,
   auth.authenticateToken,
   TreinadorController.getByUsuario

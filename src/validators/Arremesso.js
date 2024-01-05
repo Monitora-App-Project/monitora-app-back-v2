@@ -2,6 +2,11 @@ const { celebrate, Segments, Joi } = require("celebrate");
 
 module.exports = {
   create: celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(),
     [Segments.BODY]: Joi.object().keys({
       matriculaAtleta: Joi.number().integer().required(),
       responsavel: Joi.number().integer().required(),
@@ -13,13 +18,31 @@ module.exports = {
     })
   }),
 
+  getAll: celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown()
+  }),
+
   getByTeste: celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(),
     [Segments.PARAMS]: Joi.object().keys({
       idTeste: Joi.string().guid({ version: "uuidv4" }).required()
     })
   }),
 
   update: celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(),
     [Segments.PARAMS]: Joi.object().keys({
       idTeste: Joi.string().guid({ version: "uuidv4" }).required()
     }),
@@ -30,16 +53,21 @@ module.exports = {
       arremesso1: Joi.number().optional(),
       arremesso2: Joi.number().optional(),
       arremesso3: Joi.number().optional(),
-      mediaArremesso: Joi.number().optional(), 
-      maxArremesso: Joi.number().optional(), 
-      minArremesso: Joi.number().optional(), 
-      desvPadArremesso: Joi.number().optional(), 
-      coefVariacaoArremesso: Joi.number().optional(), 
+      mediaArremesso: Joi.number().optional(),
+      maxArremesso: Joi.number().optional(),
+      minArremesso: Joi.number().optional(),
+      desvPadArremesso: Joi.number().optional(),
+      coefVariacaoArremesso: Joi.number().optional(),
       obsArremesso: Joi.string().optional()
     })
   }),
 
   delete: celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(),
     [Segments.PARAMS]: Joi.object().keys({
       idTeste: Joi.string().guid({ version: "uuidv4" }).required()
     }),

@@ -3,6 +3,11 @@ const { celebrate, Segments, Joi } = require("celebrate");
 
 module.exports = {
   create: celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(),
     [Segments.BODY]: Joi.object().keys({
       matriculaAtleta: Joi.number().integer().required(),
       responsavel: Joi.number().integer().required(),
@@ -16,13 +21,13 @@ module.exports = {
       pressaoDiasRepouso: Joi.number().required(),
       fcRepousoPre: Joi.number().optional(),
       psePre: Joi.number().required(),
-      
+
       fcBpm1: Joi.number().integer().optional(),
       fcBpm2: Joi.number().integer().optional(),
       fcBpm3: Joi.number().integer().optional(),
       fcBpm4: Joi.number().integer().optional(),
       fcBpm5: Joi.number().integer().optional(),
-      
+
       pse1: Joi.number().required(),
       pse2: Joi.number().required(),
       pse3: Joi.number().required(),
@@ -34,13 +39,13 @@ module.exports = {
       numChutes3: Joi.number().integer().required(),
       numChutes4: Joi.number().integer().required(),
       numChutes5: Joi.number().integer().required(),
-      
+
       pressaoSisPos: Joi.number().required(),
       pressaoDiasPos: Joi.number().required(),
 
       rec1MinPressaoSis: Joi.number().required(),
       rec1MinPressaoDias: Joi.number().required(),
-      
+
       rec1MinFc: Joi.number().integer().optional(),
       rec2MinFc: Joi.number().integer().optional(),
       rec3MinFc: Joi.number().integer().optional(),
@@ -48,17 +53,35 @@ module.exports = {
       rec5MinFc: Joi.number().integer().optional(),
 
       rec5MinPressaoSis: Joi.number().required(),
-      rec5MinPressaoDias: Joi.number().required(),
+      rec5MinPressaoDias: Joi.number().required()
     })
   }),
 
+  getAll: celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown()
+  }),
+
   getByTeste: celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(),
     [Segments.PARAMS]: Joi.object().keys({
       idTeste: Joi.string().guid({ version: "uuidv4" }).required()
     })
   }),
 
   update: celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(),
     [Segments.PARAMS]: Joi.object().keys({
       idTeste: Joi.string().guid({ version: "uuidv4" }).required()
     }),
@@ -75,13 +98,13 @@ module.exports = {
       pressaoDiasRepouso: Joi.number().optional(),
       fcRepousoPre: Joi.number().optional(),
       psePre: Joi.number().optional(),
-      
+
       fcBpm1: Joi.number().integer().optional(),
       fcBpm2: Joi.number().integer().optional(),
       fcBpm3: Joi.number().integer().optional(),
       fcBpm4: Joi.number().integer().optional(),
       fcBpm5: Joi.number().integer().optional(),
-      
+
       pse1: Joi.number().optional(),
       pse2: Joi.number().optional(),
       pse3: Joi.number().optional(),
@@ -93,7 +116,7 @@ module.exports = {
       numChutes3: Joi.number().integer().optional(),
       numChutes4: Joi.number().integer().optional(),
       numChutes5: Joi.number().integer().optional(),
-      
+
       pressaoSisPos: Joi.number().optional(),
       pressaoDiasPos: Joi.number().optional(),
 
@@ -108,7 +131,7 @@ module.exports = {
 
       rec5MinPressaoSis: Joi.number().optional(),
       rec5MinPressaoDias: Joi.number().optional(),
-      
+
       // Valores calculados automaticamente, que sao opcionais no create
       fcRel1: Joi.number().optional(),
       fcRel2: Joi.number().optional(),
@@ -121,18 +144,22 @@ module.exports = {
       kdi: Joi.number().integer().optional(),
       numChutesTotal: Joi.number().integer().optional(),
       classificacaoFsktTotal: Joi.number().integer().optional(),
-     
 
       deltaFcRec1Est5: Joi.number().optional(),
       deltaFcRec5Rec1: Joi.number().optional(),
 
       deltaPas: Joi.number().integer().optional(),
       deltaPad: Joi.number().integer().optional(),
-      fcMaxPredita: Joi.number().integer().optional(),
+      fcMaxPredita: Joi.number().integer().optional()
     })
   }),
 
   delete: celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(),
     [Segments.PARAMS]: Joi.object().keys({
       idTeste: Joi.string().guid({ version: "uuidv4" }).required()
     }),

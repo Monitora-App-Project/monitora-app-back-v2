@@ -7,6 +7,11 @@ module.exports = {
         authorization: Joi.string().required()
       })
       .unknown(),
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(),
     [Segments.BODY]: Joi.object().keys({
       nome: Joi.string().required(),
       tipo: Joi.string().valid("Olimpico", "Paralimpico").required(),

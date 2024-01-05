@@ -2,6 +2,11 @@ const { celebrate, Segments, Joi } = require("celebrate");
 
 module.exports = {
   create: celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(),
     [Segments.BODY]: Joi.object().keys({
       matriculaAtleta: Joi.number().integer().required(),
       responsavel: Joi.number().integer().required(),
@@ -10,7 +15,7 @@ module.exports = {
       massaCorporal: Joi.number().required(),
       envergadura: Joi.number().required(),
       semiEnvergadura: Joi.number().required(),
-      
+
       circOmbro1: Joi.number().required(),
       circOmbro2: Joi.number().required(),
       circOmbro3: Joi.number().required(),
@@ -30,7 +35,7 @@ module.exports = {
       circAntDir1: Joi.number().optional(),
       circAntDir2: Joi.number().optional(),
       circAntDir3: Joi.number().optional(),
-      
+
       circAntEsq1: Joi.number().optional(),
       circAntEsq2: Joi.number().optional(),
       circAntEsq3: Joi.number().optional(),
@@ -58,7 +63,7 @@ module.exports = {
       circPantDir1: Joi.number().optional(),
       circPantDir2: Joi.number().optional(),
       circPantDir3: Joi.number().optional(),
-      
+
       circPantEsq1: Joi.number().optional(),
       circPantEsq2: Joi.number().optional(),
       circPantEsq3: Joi.number().optional(),
@@ -99,13 +104,31 @@ module.exports = {
     })
   }),
 
+  getAll: celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown()
+  }),
+
   getByTeste: celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(),
     [Segments.PARAMS]: Joi.object().keys({
       idTeste: Joi.string().guid({ version: "uuidv4" }).required()
     })
   }),
 
   update: celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(),
     [Segments.PARAMS]: Joi.object().keys({
       idTeste: Joi.string().guid({ version: "uuidv4" }).required()
     }),
@@ -117,7 +140,7 @@ module.exports = {
       massaCorporal: Joi.number().optional(),
       envergadura: Joi.number().optional(),
       semiEnvergadura: Joi.number().optional(),
-      
+
       circOmbro1: Joi.number().optional(),
       circOmbro2: Joi.number().optional(),
       circOmbro3: Joi.number().optional(),
@@ -142,7 +165,7 @@ module.exports = {
       circAntDir2: Joi.number().optional(),
       circAntDir3: Joi.number().optional(),
       mediaCircAntDir: Joi.number().optional(),
-      
+
       circAntEsq1: Joi.number().optional(),
       circAntEsq2: Joi.number().optional(),
       circAntEsq3: Joi.number().optional(),
@@ -177,7 +200,7 @@ module.exports = {
       circPantDir2: Joi.number().optional(),
       circPantDir3: Joi.number().optional(),
       mediaCircPantDir: Joi.number().optional(),
-      
+
       circPantEsq1: Joi.number().optional(),
       circPantEsq2: Joi.number().optional(),
       circPantEsq3: Joi.number().optional(),
@@ -223,18 +246,23 @@ module.exports = {
       dcPant3: Joi.number().optional(),
       mediaDcPant: Joi.number().optional(),
 
-      somaSeteDobras : Joi.number().optional(),    
-      quadradoSoma : Joi.number().optional(), 
-      densidade : Joi.number().optional(),
-      percentualGordura : Joi.number().optional(),
-      massaGorda : Joi.number().optional(), 
-      massaIsentaDeGordura : Joi.number().optional(), 
+      somaSeteDobras: Joi.number().optional(),
+      quadradoSoma: Joi.number().optional(),
+      densidade: Joi.number().optional(),
+      percentualGordura: Joi.number().optional(),
+      massaGorda: Joi.number().optional(),
+      massaIsentaDeGordura: Joi.number().optional(),
 
       observacao: Joi.string().optional()
     })
   }),
 
   delete: celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(),
     [Segments.PARAMS]: Joi.object().keys({
       idTeste: Joi.string().guid({ version: "uuidv4" }).required()
     }),
