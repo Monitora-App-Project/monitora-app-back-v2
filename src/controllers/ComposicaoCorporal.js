@@ -8,7 +8,6 @@ const { v4: uuidv4 } = require("uuid");
 require("dotenv").config();
 
 const idTipoTeste = 1;
-// Parametros para 
 
 module.exports = {
   async create(request, response) {

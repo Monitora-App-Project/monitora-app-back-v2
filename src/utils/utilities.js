@@ -10,7 +10,7 @@ module.exports = {
   // Função para calcular o desvio padrão (recebe um array com os valores)
   calcularDesvioPadrao: (arr, mean) => {
     const squaredDiffs = arr.map((num) => Math.pow(num - mean, 2));
-    const meanOfSquaredDiffs = squaredDiffs.reduce((acc,val) => acc + val, 0) / squaredDiffs.length;
+    const meanOfSquaredDiffs = squaredDiffs.reduce((acc, val) => acc + val, 0) / squaredDiffs.length;
     return Math.sqrt(meanOfSquaredDiffs);
   },
 
