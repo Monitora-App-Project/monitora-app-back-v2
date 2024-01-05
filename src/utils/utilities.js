@@ -66,10 +66,9 @@ module.exports = {
 
   async calculaClassFSKT(matriculaAtleta, numChutes) {
     try{
-      const sexo = await UsuarioModel.getSexo(matriculaAtleta);
-      console.log(sexo);
+      const sexo = (await UsuarioModel.getSexo(matriculaAtleta))[0].sexo;
       var classificacao = 0;
-      if(sexo === "Masculino"){
+      if(sexo == "Masculino"){
         if(numChutes >= 100)      {classificacao = 10;}
         else if(numChutes >= 99)  {classificacao = 9;}
         else if(numChutes >= 97)  {classificacao = 8;}

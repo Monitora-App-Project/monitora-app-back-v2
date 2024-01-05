@@ -2,7 +2,7 @@ const FSKTModel = require("../models/FSKT");
 const TesteModel = require("../models/Teste");
 const LogsModel = require("../models/Logs");
 
-const { pegaModalidade, calculaIdade, calcularKDI} = require("../utils/utilities");
+const { pegaModalidade, calculaIdade, calcularKDI, calculaClassFSKT} = require("../utils/utilities");
 const { v4: uuidv4 } = require("uuid");
 
 require("dotenv").config();
@@ -32,7 +32,7 @@ module.exports = {
 
       // Cria fskt
       fskt.idTeste = id;
-      fskt.fcMaxPredita = 208 - (0.7 * teste.idade);
+      fskt.fcMaxPredita = Math.round(208 - (0.7 * teste.idade));
       
       fskt.fcRel1 = (fskt.fcBpm1/fskt.fcMaxPredita) * 100;
       fskt.fcRel2 = (fskt.fcBpm2/fskt.fcMaxPredita) * 100;
@@ -51,8 +51,7 @@ module.exports = {
       ]; 
       fskt.kdi = calcularKDI(numChutesArray);
       fskt.numChutesTotal = numChutesArray.reduce((total, num) => total + num, 0);
-      fskt.classificacaoFsktTotal = calculaClassFSKT(fskt.numChutesTotal);
-      //fskt.rec1MinFc: Joi.categoria().number().integer().optional(),
+      fskt.classificacaoFsktTotal = await calculaClassFSKT(matriculaAtleta, fskt.numChutesTotal);
  
       fskt.deltaFcRec1Est5 = fskt.rec1MinFc - fskt.fcBpm5;
       fskt.deltaFcRec5Rec1 = fskt.rec5MinFc - fskt.rec1MinFc;
@@ -153,7 +152,7 @@ module.exports = {
       // Da o Update
       const stillExistFieldsToUpdate = Object.values(fsktUpdate).length > 0;
       if (stillExistFieldsToUpdate) {
-        await FSKTHooperModel.updateByTeste(idTeste, fsktUpdate);
+        await FSKTModel.updateByTeste(idTeste, fsktUpdate);
         // Cria log
         const log = {};
         log.id = uuidv4();

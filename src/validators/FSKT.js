@@ -41,6 +41,7 @@ module.exports = {
       rec1MinPressaoSis: Joi.number().required(),
       rec1MinPressaoDias: Joi.number().required(),
       
+      rec1MinFc: Joi.number().integer().optional(),
       rec2MinFc: Joi.number().integer().optional(),
       rec3MinFc: Joi.number().integer().optional(),
       rec4MinFc: Joi.number().integer().optional(),
@@ -98,7 +99,8 @@ module.exports = {
 
       rec1MinPressaoSis: Joi.number().optional(),
       rec1MinPressaoDias: Joi.number().optional(),
-      
+
+      rec1MinFc: Joi.number().integer().optional(),
       rec2MinFc: Joi.number().integer().optional(),
       rec3MinFc: Joi.number().integer().optional(),
       rec4MinFc: Joi.number().integer().optional(),
@@ -119,7 +121,7 @@ module.exports = {
       kdi: Joi.number().integer().optional(),
       numChutesTotal: Joi.number().integer().optional(),
       classificacaoFsktTotal: Joi.number().integer().optional(),
-      rec1MinFc: Joi.number().integer().optional(),
+     
 
       deltaFcRec1Est5: Joi.number().optional(),
       deltaFcRec5Rec1: Joi.number().optional(),
