@@ -51,6 +51,18 @@ module.exports = {
     else return false;
   },
 
+  async verificaCPF(cpf) {
+    const result = await connection("usuario").where({ cpf }).select("*").first();
+    if (result) return true;
+    else return false;
+  },
+
+  async verificaEmail(email) {
+    const result = await connection("usuario").where({ email }).select("*").first();
+    if (result) return true;
+    else return false;
+  },
+
   async updateById(matricula, usuario) {
     const result = await connection("usuario").where({ matricula }).update(usuario);
     return result;
