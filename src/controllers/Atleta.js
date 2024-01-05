@@ -11,6 +11,18 @@ module.exports = {
   async create(request, response) {
     try {
       const requestData = request.body;
+      const cpfExiste = await UsuarioModel.verificaCPF(requestData.cpf);
+      const emailExiste = await UsuarioModel.verificaEmail(requestData.email);
+      if (cpfExiste) {
+        return response.status(400).json({
+          notification: "Já existe um usuário com esse CPF cadastrado."
+        });
+      }
+      if (emailExiste) {
+        return response.status(400).json({
+          notification: "Já existe um usuário com esse e-mail cadastrado."
+        });
+      }
 
       // Separar os dados do Atleta e do Usuario usando desestruturação
       const {
@@ -144,14 +156,14 @@ module.exports = {
 
       const log = {};
       log.nomeTabela = "atleta";
-      log.responsavel =  dataToUpdate.responsavel;
+      log.responsavel = dataToUpdate.responsavel;
       log.data = new Date();
       log.tabelaId = usuario;
       log.tipoAlteracao = "Update";
       log.motivo = dataToUpdate.motivo;
 
       const ocorrencia = {};
-      ocorrencia.responsavel =  dataToUpdate.responsavel;
+      ocorrencia.responsavel = dataToUpdate.responsavel;
       ocorrencia.data = new Date();
       ocorrencia.motivo = dataToUpdate.motivo;
       ocorrencia.usuarioModificado = usuario;

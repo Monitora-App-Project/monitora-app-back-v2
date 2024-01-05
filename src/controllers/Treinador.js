@@ -11,7 +11,18 @@ module.exports = {
   async create(request, response) {
     try {
       const requestData = request.body;
-
+      const cpfExiste = await UsuarioModel.verificaCPF(requestData.cpf);
+      const emailExiste = await UsuarioModel.verificaEmail(requestData.email);
+      if (cpfExiste) {
+        return response.status(400).json({
+          notification: "Já existe um usuário com esse CPF cadastrado."
+        });
+      }
+      if (emailExiste) {
+        return response.status(400).json({
+          notification: "Já existe um usuário com esse e-mail cadastrado."
+        });
+      }
       // Separar os dados do treinador e do Usuario usando desestruturação
       const { cref, modalidade, responsavel, ...dadosUsuario } = requestData;
 
