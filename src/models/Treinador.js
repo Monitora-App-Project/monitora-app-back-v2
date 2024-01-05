@@ -17,7 +17,8 @@ module.exports = {
     const result = await connection("treinador")
       .where({ usuario })
       .select("treinador.*", "usuario.*")
-      .innerJoin("usuario", "treinador.usuario", "usuario.matricula");
+      .innerJoin("usuario", "treinador.usuario", "usuario.matricula")
+      .first();
     return result;
   },
 

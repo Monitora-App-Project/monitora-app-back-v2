@@ -1,5 +1,7 @@
 const UsuarioModel = require("../models/Usuario");
 const AtletaModel = require("../models/Atleta");
+const { createHmac } = require('crypto');
+require("dotenv").config();
 
 module.exports = {
   // Função para calcular a média (recebe um array com os valores)
@@ -103,4 +105,34 @@ module.exports = {
     }
   },
 
+  },
+
+  defineUsuarioSecret: (tipo) => {
+    switch (tipo) {
+      case "admin":
+        return process.env.ADMIN_SECRET;
+  
+      case "coordenador":
+        return process.env.COORDENADOR_SECRET;
+  
+      case "analista":
+        return process.env.ANALISTA_SECRET;
+  
+      case "treinador":
+        return process.env.TREINADOR_SECRET;
+  
+      case "atleta":
+        return process.env.ATLETA_SECRET;
+  
+      default:
+        break;
+    }
+  },
+
+  encryptData: (data) => {
+    const hash = createHmac(process.env.ALGORITHM, process.env.SECRET)
+      .update(data)
+      .digest(process.env.OUTPUT);
+    return hash;
+  }
 };
