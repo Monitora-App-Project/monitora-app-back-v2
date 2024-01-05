@@ -17,7 +17,7 @@ const pseAtletaRoutes = require('./pseAtleta');
 const pseTreinadorRoutes = require('./pseTreinador');
 const cmjRoutes = require('./cmj');
 const vfcRoutes = require('./vfc');
-
+const fsktRoutes = require('./fskt');
 const arremessoRoutes = require('./arremesso');
 
 const routes = express.Router();
@@ -39,7 +39,7 @@ routes.use('/pseatleta', pseAtletaRoutes);
 routes.use('/psetreinador', pseTreinadorRoutes);
 routes.use('/cmj', cmjRoutes);
 routes.use('/vfc', vfcRoutes);
-
+routes.use('/fskt', fsktRoutes);
 routes.use('/arremesso', arremessoRoutes);
 
 

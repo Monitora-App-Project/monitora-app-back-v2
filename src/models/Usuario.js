@@ -71,19 +71,16 @@ module.exports = {
     return result;
   },
 
-  // async getModalidadeAtleta(matricula) {
-  //   const result = await connection("usuario")
-  //     .leftJoin("atleta", "usuario.matricula", "atleta.usuario")
-  //     .select("atleta.modalidade")
-  //     .where({ matricula });
-  //   return result;
-  // },
-
   async getCadeirante(matricula){
     const result = await connection("usuario")
     .leftJoin("atleta", "usuario.matricula", "atleta.usuario")
     .select("atleta.cadeirante")
     .where({ matricula });
   return result; 
+  },
+
+  async getSexo(matricula){
+    const result = await connection("usuario").where({ matricula }).select("sexo");
+    return result;
   }
 };

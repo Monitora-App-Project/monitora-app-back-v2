@@ -14,6 +14,13 @@ module.exports = {
     return Math.sqrt(meanOfSquaredDiffs);
   },
 
+  calcularKDI: (arr) => {
+    const soma = arr.reduce((total, num) => total + num, 0);
+    const max = Math.max(...arr);
+
+    return (1 - (soma/(max*5)))*100;
+  },
+
   async calculaIdade(matriculaAtleta) {
     try {
       let dataNascimento = await UsuarioModel.getDataNascimento(matriculaAtleta);
@@ -56,4 +63,45 @@ module.exports = {
       });
     }
   },
+
+  async calculaClassFSKT(matriculaAtleta, numChutes) {
+    try{
+      const sexo = await UsuarioModel.getSexo(matriculaAtleta);
+      console.log(sexo);
+      var classificacao = 0;
+      if(sexo === "Masculino"){
+        if(numChutes >= 100)      {classificacao = 10;}
+        else if(numChutes >= 99)  {classificacao = 9;}
+        else if(numChutes >= 97)  {classificacao = 8;}
+        else if(numChutes >= 94)  {classificacao = 7;}
+        else if(numChutes >= 91)  {classificacao = 6;}
+        else if(numChutes >= 87)  {classificacao = 5;}
+        else if(numChutes >= 82)  {classificacao = 4;}
+        else if(numChutes >= 76)  {classificacao = 3;}
+        else if(numChutes >= 73)  {classificacao = 2;}
+        else if(numChutes >= 70)  {classificacao = 1;}
+        else                      {classificacao = 0;}
+      }
+      else{
+        if(numChutes >= 95)      {classificacao = 10;}
+        else if(numChutes >= 94)  {classificacao = 9;}
+        else if(numChutes >= 91)  {classificacao = 8;}
+        else if(numChutes >= 87)  {classificacao = 7;}
+        else if(numChutes >= 84)  {classificacao = 6;}
+        else if(numChutes >= 80)  {classificacao = 5;}
+        else if(numChutes >= 76)  {classificacao = 4;}
+        else if(numChutes >= 72)  {classificacao = 3;}
+        else if(numChutes >= 68)  {classificacao = 2;}
+        else if(numChutes >= 65)  {classificacao = 1;}
+        else                      {classificacao = 0;}
+      }
+      return classificacao;
+    } catch (err) {
+      console.error(`CalculaClassFSKT falhou: ${err}`);
+      return response.status(500).json({
+        notification: "Internal server error"
+      });
+    }
+  },
+
 };
