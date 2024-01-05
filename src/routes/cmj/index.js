@@ -12,12 +12,12 @@ cmjRouter.get('/',
 );
 cmjRouter.get(
   '/fields',
-  // AteltaValidator.getById,
+  // CMJValidator.getById,
   CMJController.getByFields
 );
 cmjRouter.get(
   '/date',
-  // AteltaValidator.getById,
+  // CMJValidator.getById,
   CMJController.getByDate
 );
 cmjRouter.get(

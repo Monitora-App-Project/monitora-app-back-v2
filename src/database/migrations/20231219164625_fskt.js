@@ -45,7 +45,7 @@ exports.up = function(knex) {
     table.float("deltaPasRepouso").notNullable();
     table.float("deltaPadRepouso").notNullable();
 
-    table.integer("kdi").notNullable();
+    table.float("kdi").notNullable();
     table.integer("numChutesTotal").notNullable();
     table.integer("classificacaoFsktTotal").notNullable();
 

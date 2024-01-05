@@ -1,8 +1,8 @@
-const composicaoCorporalModel = require("../models/ComposicaoCorporal");
+const ComposicaoCorporalModel = require("../models/ComposicaoCorporal");
 const TesteModel = require("../models/Teste");
 const LogsModel = require("../models/Logs");
 
-const { pegaModalidade, calculaIdade, calcularMedia } = require("../utils/utilities");
+const { pegaModalidade, calculaIdade, calcularMedia, getCadeirante } = require("../utils/utilities");
 const { v4: uuidv4 } = require("uuid");
 
 require("dotenv").config();
@@ -86,25 +86,37 @@ module.exports = {
         compCorp.mediaDcAbdominal +
         compCorp.mediaDcSuprailiaca +
         compCorp.mediaDcCoxa;
-      compCorp.quadradoSoma = compCorp.somaSeteDobras ^ 2;
+      compCorp.quadradoSoma = compCorp.somaSeteDobras**2;
       compCorp.densidade =
         1.112 - 0.00043499 * compCorp.somaSeteDobras + 0.00000055 * compCorp.quadradoSoma - 0.00028826 * 36;
+      const isCadeirante = getCadeirante(matriculaAtleta);
+      if (isCadeirante){
+        compCorp.percentualGordura = 
+          -3.04 + (0.41 * compCorp.somaSeteDobras) - (0.001 * compCorp.quadradoSoma) + (0.03 * compCorp.mediaCircPantDir);
+      }
+      else{
+        compCorp.percentualGordura = 
+          ((4.95/compCorp.densidade)-4.5)*100
+      }
 
-      await HooperModel.create(compCorp); // O restante dos dados a esta no objeto hooper
+      compCorp.massaGorda = compCorp.massaCorporal*(compCorp.percentualGordura/100);
+      compCorp.massaIsentaDeGordura = compCorp.massaCorporal - compCorp.massaGorda;
+
+      await ComposicaoCorporalModel.create(compCorp); 
 
       // Cria log de Create
       const log = {}; // JSON que guarda os dados a serem inseridos no log
       log.id = uuidv4();
       log.responsavel = responsavel;
       log.data = timestamp;
-      log.nomeTabela = "Hooper";
+      log.nomeTabela = "composicaoCorporal";
       log.tabelaId = id;
       log.tipoAlteracao = "Create";
       await LogsModel.create(log);
 
-      return response.status(201).json({ id: hooper.idTeste, horaDaColeta: timestamp });
+      return response.status(201).json({ id: compCorp.idTeste, horaDaColeta: timestamp });
     } catch (err) {
-      console.error(`Hooper creation failed: ${err}`);
+      console.error(`Composição Corporal creation failed: ${err}`);
       return response.status(500).json({
         notification: "Internal server error"
       });
@@ -113,10 +125,10 @@ module.exports = {
 
   async getAll(request, response) {
     try {
-      const result = await HooperModel.getAll();
+      const result = await ComposicaoCorporalModel.getAll();
       return response.status(200).json(result);
     } catch (err) {
-      console.error(`CMJ getAll failed: ${err}`);
+      console.error(`Composicao Corporal getAll failed: ${err}`);
       return response.status(500).json({
         notification: "Internal server error"
       });
@@ -126,10 +138,10 @@ module.exports = {
   async getByFields(request, response) {
     try {
       const fields = request.body;
-      const result = await HooperModel.getByFields(fields);
+      const result = await ComposicaoCorporalModel.getByFields(fields);
       return response.status(200).json(result);
     } catch (err) {
-      console.error(`Hooper getByFields failed: ${err}`);
+      console.error(`Composicao Corporal getByFields failed: ${err}`);
       return response.status(500).json({
         notification: "Internal server error"
       });
@@ -139,10 +151,10 @@ module.exports = {
   async getByTeste(request, response) {
     try {
       const { idTeste } = request.params;
-      const result = await HooperModel.getByTeste(idTeste);
+      const result = await ComposicaoCorporalModel.getByTeste(idTeste);
       return response.status(200).json(result);
     } catch (err) {
-      console.error(`Hooper getByTeste failed: ${err}`);
+      console.error(`Composicao Corporal getByTeste failed: ${err}`);
       return response.status(500).json({
         notification: "Internal server error"
       });
@@ -152,10 +164,10 @@ module.exports = {
   async getByDate(request, response) {
     try {
       const fields = request.body;
-      const result = await HooperModel.getByDate(fields);
+      const result = await ComposicaoCorporalModel.getByDate(fields);
       return response.status(200).json(result);
     } catch (err) {
-      console.error(`Hooper getByDate failed: ${err}`);
+      console.error(`Composicao Corporal getByDate failed: ${err}`);
       return response.status(500).json({
         notification: "Internal server error"
       });
@@ -165,25 +177,25 @@ module.exports = {
   async update(request, response) {
     try {
       const { idTeste } = request.params;
-      const hooperUpdate = request.body;
+      const compCorpUpdate = request.body;
 
       // Seta valores do log
-      const responsavel = hooperUpdate.responsavel;
-      const motivo = hooperUpdate.motivo;
-      delete hooperUpdate.responsavel;
-      delete hooperUpdate.motivo;
+      const responsavel = compCorpUpdate.responsavel;
+      const motivo = compCorpUpdate.motivo;
+      delete compCorpUpdate.responsavel;
+      delete compCorpUpdate.motivo;
       const timestamp = new Date();
-      const atributos = Object.keys(hooperUpdate);
-      const valoresNovos = Object.values(hooperUpdate);
+      const atributos = Object.keys(compCorpUpdate);
+      const valoresNovos = Object.values(compCorpUpdate);
 
-      const hooperAtual = await HooperModel.getByTeste(idTeste);
-      const valoresAntigos = Object.fromEntries(atributos.map((chave) => [chave, hooperAtual[0][chave]]));
+      const compCorpAtual = await ComposicaoCorporalModel.getByTeste(idTeste);
+      const valoresAntigos = Object.fromEntries(atributos.map((chave) => [chave, compCorpAtual[0][chave]]));
       const valoresAntigosValues = Object.values(valoresAntigos);
 
       // Da o Update
-      const stillExistFieldsToUpdate = Object.values(hooperUpdate).length > 0;
+      const stillExistFieldsToUpdate = Object.values(compCorpUpdate).length > 0;
       if (stillExistFieldsToUpdate) {
-        await HooperModel.updateByTeste(idTeste, hooperUpdate);
+        await ComposicaoCorporalModel.updateByTeste(idTeste, compCorpUpdate);
       }
 
       // Cria log
@@ -191,7 +203,7 @@ module.exports = {
       log.id = uuidv4();
       log.responsavel = responsavel;
       log.data = timestamp;
-      log.nomeTabela = "Hooper";
+      log.nomeTabela = "composicaoCorporal";
       log.tabelaId = idTeste;
       log.tipoAlteracao = "Update";
       log.atributo = atributos.join(",");
@@ -202,7 +214,7 @@ module.exports = {
 
       return response.status(200).json("OK");
     } catch (err) {
-      console.error(`Hooper update failed: ${err}`);
+      console.error(`Composicao Corporal update failed: ${err}`);
       return response.status(500).json({
         notification: "Internal server error"
       });
@@ -212,9 +224,9 @@ module.exports = {
   async delete(request, response) {
     try {
       const { idTeste } = request.params;
-      const hooperDelete = request.body;
-      const responsavel = hooperDelete.responsavel;
-      const motivo = hooperDelete.motivo;
+      const compCorpDelete = request.body;
+      const responsavel = compCorpDelete.responsavel;
+      const motivo = compCorpDelete.motivo;
       const timestamp = new Date();
 
       // Cria log
@@ -222,17 +234,17 @@ module.exports = {
       log.id = uuidv4();
       log.responsavel = responsavel;
       log.data = timestamp;
-      log.nomeTabela = "Hooper";
+      log.nomeTabela = "composicaoCorporal";
       log.tabelaId = idTeste;
       log.tipoAlteracao = "Delete";
       log.motivo = motivo;
 
-      await HooperModel.deleteByTeste(idTeste);
+      await ComposicaoCorporalModel.deleteByTeste(idTeste);
       await TesteModel.deleteById(idTeste);
       await LogsModel.create(log);
       return response.status(200).json("OK");
     } catch (err) {
-      console.error(`Hooper delete failed: ${err}`);
+      console.error(`Composicao Corporal delete failed: ${err}`);
       return response.status(500).json({
         notification: "Internal server error"
       });
