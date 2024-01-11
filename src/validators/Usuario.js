@@ -4,7 +4,7 @@ module.exports = {
   create: celebrate({
     [Segments.HEADERS]: Joi.object()
       .keys({
-        authorization: Joi.string().required(),
+        authorization: Joi.string().required()
       })
       .unknown(),
     [Segments.BODY]: Joi.object().keys({
@@ -53,15 +53,15 @@ module.exports = {
   getAll: celebrate({
     [Segments.HEADERS]: Joi.object()
       .keys({
-        authorization: Joi.string().required(),
+        authorization: Joi.string().required()
       })
-      .unknown(),
-    }),
+      .unknown()
+  }),
 
   getById: celebrate({
     [Segments.HEADERS]: Joi.object()
       .keys({
-        authorization: Joi.string().required(),
+        authorization: Joi.string().required()
       })
       .unknown(),
     [Segments.PARAMS]: Joi.object().keys({
@@ -72,7 +72,7 @@ module.exports = {
   update: celebrate({
     [Segments.HEADERS]: Joi.object()
       .keys({
-        authorization: Joi.string().required(),
+        authorization: Joi.string().required()
       })
       .unknown(),
     [Segments.PARAMS]: Joi.object().keys({
@@ -82,7 +82,6 @@ module.exports = {
       matricula: Joi.number().integer().optional(),
       tipo: Joi.string().valid("admin", "coordenador", "analista", "treinador", "atleta").optional(),
       email: Joi.string().email().optional(),
-      senha: Joi.string().optional(),
       ativo: Joi.boolean().optional(),
       biometria: Joi.string().optional(),
       nomeCompleto: Joi.string().optional(),
@@ -122,10 +121,32 @@ module.exports = {
     })
   }),
 
+  updatePassword: celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(),
+    [Segments.PARAMS]: Joi.object().keys({
+      matricula: Joi.number().required()
+    }),
+    [Segments.BODY]: Joi.object().keys({
+      senhaAtual: Joi.string().optional().min(8).max(20),
+      novaSenha: Joi.string().optional().min(8).max(20)
+    })
+  }),
+
+  updateExternalPassword: celebrate({
+    [Segments.BODY]: Joi.object().keys({
+      usuario: Joi.number().required(),
+      senha: Joi.string().required().min(8).max(20)
+    })
+  }),
+
   delete: celebrate({
     [Segments.HEADERS]: Joi.object()
       .keys({
-        authorization: Joi.string().required(),
+        authorization: Joi.string().required()
       })
       .unknown(),
     [Segments.PARAMS]: Joi.object().keys({

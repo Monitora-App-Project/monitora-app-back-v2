@@ -35,6 +35,17 @@ usuarioRouter.put(
   auth.authenticateToken,
   UsuarioController.update
 );
+usuarioRouter.put(
+  '/alterarSenha/:matricula',
+  UsuarioValidator.updatePassword,
+  auth.authenticateToken,
+  UsuarioController.updatePassword
+);
+usuarioRouter.put(
+  '/externo/alterarSenha',
+  UsuarioValidator.updateExternalPassword,
+  UsuarioController.updateExternalPassword
+);
 usuarioRouter.delete(
   '/:matricula',
   UsuarioValidator.delete,
