@@ -4,7 +4,7 @@ module.exports = {
 
   development: {
     client: 'pg',
-    connection: process.env.PG_CONNECTION_STRING,
+    connection: process.env.PG_CONNECTION_STRING_DEV,
   migrations: {
     directory: './src/database/migrations'
   },
@@ -12,14 +12,8 @@ module.exports = {
   },
 
   test: {
-    client: 'mysql',
-    connection: {
-      host : '',
-      port : '',
-      user : '',
-      password : '',
-      database : '',
-    },
+    client: 'pg',
+    connection: process.env.PG_CONNECTION_STRING_TEST,
   migrations: {
     directory: './src/database/migrations'
   },

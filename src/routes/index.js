@@ -20,6 +20,8 @@ const vfcRoutes = require('./vfc');
 const fsktRoutes = require('./fskt');
 const arremessoRoutes = require('./arremesso');
 const sessionRoutes = require('./session');
+const recoverPassRoutes = require('./recoverPassword');
+const cronJobRoutes = require('./cronJob');
 
 const routes = express.Router();
 
@@ -43,6 +45,7 @@ routes.use('/vfc', vfcRoutes);
 routes.use('/fskt', fsktRoutes);
 routes.use('/arremesso', arremessoRoutes);
 routes.use('/login', sessionRoutes);
-
+routes.use('/recuperarSenha', recoverPassRoutes);
+routes.use('/cronJob', cronJobRoutes);
 
 module.exports = routes;
