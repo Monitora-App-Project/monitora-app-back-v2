@@ -1,10 +1,12 @@
 /* eslint-disable prettier/prettier */
 const RecoverPassModel = require("../models/RecoverPassword");
 const UsuarioModel = require("../models/Usuario");
+const CronJobModel = require("../models/CronJob");
 const Mail = require("../mail/mail");
 const { encryptData } = require("../utils/utilities");
 const { createHmac } = require("crypto");
 const cron = require("node-cron");
+const { v4: uuidv4 } = require("uuid");
 require("dotenv").config();
 
 function generateRandomFiveDigits() {
@@ -42,9 +44,18 @@ module.exports = {
       const minutes = date.getMinutes();
       const hour = date.getHours();
       const cronExpression = `${minutes} ${hour} ${day} ${month} *`;
+      const jobId = uuidv4();
+
+      await CronJobModel.create({
+        id: jobId,
+        cronExpression: cronExpression,
+        type: "recoverPassword",
+        additionalData: recoverPass.usuario
+      });
 
       const task = cron.schedule(cronExpression, async () => {
         await RecoverPassModel.deleteById(recoverPass.usuario);
+        await CronJobModel.deleteById(jobId);
         task.stop();
       });
 
