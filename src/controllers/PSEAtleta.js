@@ -47,6 +47,7 @@ module.exports = {
       pseAtleta.idTeste = id;
       pseAtleta.diaDaSemana = timestamp.getDay(); // 0 a 6
       pseAtleta.semanaDoAno = timestamp.getWeek(); // Padrao ISO-
+      pseAtleta.pseSessao = pseAtleta.pseAtleta * pseAtleta.duracaoTreino;
       await PseAtletaModel.create(pseAtleta);
 
       // Cria log de Create

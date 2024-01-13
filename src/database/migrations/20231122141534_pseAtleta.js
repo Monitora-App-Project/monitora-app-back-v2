@@ -8,7 +8,7 @@ exports.up = function(knex) {
     table.tinyint("pseAtleta").notNullable();        
     table.integer("pseSessao").notNullable();
 
-    table.float("duracaoTreino").notNullable();
+    table.integer("duracaoTreino").notNullable();
 
     table.integer("diaDaSemana").notNullable();     
     table.integer("semanaDoAno").notNullable();
