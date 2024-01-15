@@ -19,5 +19,11 @@ module.exports = {
   async deleteById(id) {
     const result = await connection("teste").where({ id }).delete();
     return result;
+  },
+
+  async verificaIdTesteExiste(id){
+    const result = await connection("teste").where({ id }).select("*").first();
+    if (result) return true;
+    else return false;
   }
 };
