@@ -52,7 +52,7 @@ module.exports = {
       teste.idade = await calculaIdade(matriculaAtleta);
       await TesteModel.create(teste);
       
-      // Calcula novos dados
+      // Dados do teste especifico
       const valoresOmbro = [compCorp.circOmbro1, compCorp.circOmbro2, compCorp.circOmbro3];
       const valoresTorax = [compCorp.circTorax1, compCorp.circTorax2, compCorp.circTorax3];
       const valoresBracoDir = [compCorp.circBracoDir1, compCorp.circBracoDir2, compCorp.circBracoDir3];
@@ -214,11 +214,11 @@ module.exports = {
       const { idTeste } = request.params;
       const compCorpUpdate = request.body;
       const responsavel = compCorpUpdate.responsavel;
-      const idExiste = await TesteModel.verificaIdTesteExiste(idTeste);
+      const idExiste = await ComposicaoCorporalModel.verificaIdTesteExiste(idTeste);
       const responsavelExiste = await UsuarioModel.verificaMatriculaExiste(responsavel);
       if(!idExiste){
         return response.status(400).json({
-          notification: "Teste inexistente."
+          notification: "Não há testes de Composição Corporal com esse id."
         });
       }
       if (!responsavelExiste) {
@@ -243,6 +243,8 @@ module.exports = {
       const stillExistFieldsToUpdate = Object.values(compCorpUpdate).length > 0;
       if (stillExistFieldsToUpdate) {
         await ComposicaoCorporalModel.updateByTeste(idTeste, compCorpUpdate);
+      } else {
+        return response.status(200).json("Não há dados para serem alterados");
       }
 
       // Cria log
@@ -273,11 +275,11 @@ module.exports = {
       const { idTeste } = request.params;
       const compCorpDelete = request.body;
       const responsavel = compCorpDelete.responsavel;
-      const idExiste = await TesteModel.verificaIdTesteExiste(idTeste);
+      const idExiste = await ComposicaoCorporalModel.verificaIdTesteExiste(idTeste);
       const responsavelExiste = await UsuarioModel.verificaMatriculaExiste(responsavel);
       if(!idExiste){
         return response.status(400).json({
-          notification: "Teste inexistente."
+          notification: "Não há testes de Composição Corporal com esse id."
         });
       }
       if (!responsavelExiste) {
