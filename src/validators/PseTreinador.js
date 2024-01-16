@@ -16,7 +16,7 @@ module.exports = {
       tipoTreino: Joi.string().valid("Especifico", "Força", "Competição").required(),
       faseTreinamento: Joi.string().required(),
       obsBemEstar: Joi.string().optional(),
-      obsBemEstar: Joi.string().optional()
+      obsPse: Joi.string().optional()
     })
   }),
 

@@ -81,7 +81,7 @@ module.exports = {
       }
 
       // Cria log de Create
-      const log = {}; // JSON que guarda os dados a serem inseridos no log
+      const log = {}; 
       log.id = uuidv4();
       log.responsavel = responsavel;
       log.data = timestamp;
