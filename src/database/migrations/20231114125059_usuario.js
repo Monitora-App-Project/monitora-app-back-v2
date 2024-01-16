@@ -29,7 +29,7 @@ exports.up = function(knex) {
     table.integer("cep").notNullable();
     table.string("cidade").notNullable();
     table.string("estado").notNullable();
-    table.string("telefoneResidencial").notNullable();
+    table.string("telefoneResidencial");
     table.string("celular").notNullable();
     table.boolean("temAlergia").notNullable();
     table.string("tipoAlergia", 255);
@@ -41,8 +41,7 @@ exports.up = function(knex) {
     table.boolean("temConvenio").notNullable();
     table.string("tipoConvenio", 255);
     table.integer("numeroConvenio");
-    table.string("tempoPratica").notNullable();
-    table.date("fimAtendimentoCTE").notNullable();
+    table.date("fimAtendimentoCTE");
     table.boolean("possuiDeficiencia").notNullable();
     table.string("tipoDeficiencia", 255);
     table.enum("meioTransporte", ['Onibus', 'Carro', 'Moto', 'Bicicleta', 'Ape']).notNullable();
