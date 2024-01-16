@@ -35,7 +35,7 @@ module.exports = {
       delete hooper.matriculaAtleta;
       delete hooper.responsavel;
       
-      // Testes de existência - adicionar teste do UUID depois
+      // Testes de existência 
       const alunoExiste = await UsuarioModel.verificaMatriculaExiste(matriculaAtleta);
       const responsavelExiste = await UsuarioModel.verificaMatriculaExiste(responsavel);
       var idExiste = await TesteModel.verificaIdTesteExiste(id);
@@ -55,7 +55,7 @@ module.exports = {
       }
 
       // Cria teste geral
-      const teste = {}; // JSON que guarda os dados do teste geral
+      const teste = {}; 
       teste.id = id;
       teste.horaDaColeta = timestamp;
       teste.matriculaAtleta = matriculaAtleta;
@@ -127,10 +127,10 @@ module.exports = {
   async getByTeste(request, response) {
     try {
       const { idTeste } = request.params;
-      const idExiste = await TesteModel.verificaIdTesteExiste(idTeste);
+      const idExiste = await HooperModel.verificaIdTesteExiste(idTeste);
       if(!idExiste){
         return response.status(400).json({
-          notification: "Teste inexistente."
+          notification: "Não há testes de Hooper com esse id."
         });
       }
       const result = await HooperModel.getByTeste(idTeste);

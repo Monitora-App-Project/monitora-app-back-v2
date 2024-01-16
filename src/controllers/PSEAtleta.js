@@ -1,6 +1,7 @@
 const PseAtletaModel = require("../models/PSEAtleta");
 const TesteModel = require("../models/Teste");
 const LogsModel = require("../models/Logs");
+const UsuarioModel = require("../models/Usuario");
 
 const { pegaModalidade, calculaIdade } = require("../utils/utilities");
 const { v4: uuidv4 } = require("uuid");
@@ -28,13 +29,33 @@ module.exports = {
       const pseAtleta = request.body;
       const matriculaAtleta = pseAtleta.matriculaAtleta;
       const responsavel = pseAtleta.responsavel;
-      delete pseAtleta.matriculaAtleta;
-      delete pseAtleta.responsavel;
       const id = uuidv4();
       const timestamp = new Date();
 
+      delete pseAtleta.matriculaAtleta;
+      delete pseAtleta.responsavel;
+      
+      // Testes de existência 
+      const alunoExiste = await UsuarioModel.verificaMatriculaExiste(matriculaAtleta);
+      const responsavelExiste = await UsuarioModel.verificaMatriculaExiste(responsavel);
+      var idExiste = await TesteModel.verificaIdTesteExiste(id);
+      if (!alunoExiste) {
+        return response.status(400).json({
+          notification: "O número de matrícula do atleta não está cadastrado."
+        });
+      }
+      if (!responsavelExiste) {
+        return response.status(400).json({
+          notification: "O número de matrícula do responsável não está cadastrado."
+        });
+      }
+      while(idExiste){
+        id = uuidv4();        // Se o id ja existir, recalcula
+        idExiste = await TesteModel.verificaIdTesteExiste(id);
+      }
+
       // Cria teste geral
-      const teste = {}; // JSON que guarda os dados do teste geral
+      const teste = {}; 
       teste.id = id;
       teste.horaDaColeta = timestamp;
       teste.matriculaAtleta = matriculaAtleta;
@@ -43,12 +64,22 @@ module.exports = {
       teste.idade = await calculaIdade(matriculaAtleta);
       await TesteModel.create(teste);
 
-      // Cria pseAtleta
+      // Ddos do teste especifico 
       pseAtleta.idTeste = id;
       pseAtleta.diaDaSemana = timestamp.getDay(); // 0 a 6
       pseAtleta.semanaDoAno = timestamp.getWeek(); // Padrao ISO-
       pseAtleta.pseSessao = pseAtleta.pseAtleta * pseAtleta.duracaoTreino;
-      await PseAtletaModel.create(pseAtleta);
+      
+      // Cria teste especifico
+      try {
+        await PseAtletaModel.create(pseAtleta); 
+      } catch (err) {
+        await TesteModel.deleteById(id)
+        console.error(`PSEAtleta creation failed: ${err}`);
+        return response.status(500).json({
+          notification: "Internal server error"
+        });
+      }
 
       // Cria log de Create
       const log = {}; // JSON que guarda os dados a serem inseridos no log
@@ -97,6 +128,12 @@ module.exports = {
   async getByTeste(request, response) {
     try {
       const { idTeste } = request.params;
+      const idExiste = await PseAtletaModel.verificaIdTesteExiste(idTeste);
+      if(!idExiste){
+        return response.status(400).json({
+          notification: "Não há testes de PSE Atleta com esse id."
+        });
+      }
       const result = await PseAtletaModel.getByTeste(idTeste);
       return response.status(200).json(result);
     } catch (err) {
@@ -124,9 +161,21 @@ module.exports = {
     try {
       const { idTeste } = request.params;
       const pseAtletaUpdate = request.body;
+      const responsavel = pseAtletaUpdate.responsavel;
+      const idExiste = await PseAtletaModel.verificaIdTesteExiste(idTeste);
+      const responsavelExiste = await UsuarioModel.verificaMatriculaExiste(responsavel);
+      if(!idExiste){
+        return response.status(400).json({
+          notification: "Não há testes de PSE Atleta com esse id."
+        });
+      }
+      if (!responsavelExiste) {
+        return response.status(400).json({
+          notification: "O número de matrícula do responsável não está cadastrado."
+        });
+      }
 
       // Seta valores do log
-      const responsavel = pseAtletaUpdate.responsavel;
       const motivo = pseAtletaUpdate.motivo;
       delete pseAtletaUpdate.responsavel;
       delete pseAtletaUpdate.motivo;
@@ -142,6 +191,8 @@ module.exports = {
       const stillExistFieldsToUpdate = Object.values(pseAtletaUpdate).length > 0;
       if (stillExistFieldsToUpdate) {
         await PseAtletaModel.updateByTeste(idTeste, pseAtletaUpdate);
+      } else {
+        return response.status(200).json("Não há dados para serem alterados");
       }
 
       // Cria log
@@ -172,6 +223,19 @@ module.exports = {
       const { idTeste } = request.params;
       const pseAtletaDelete = request.body;
       const responsavel = pseAtletaDelete.responsavel;
+      const idExiste = await PseAtletaModel.verificaIdTesteExiste(idTeste);
+      const responsavelExiste = await UsuarioModel.verificaMatriculaExiste(responsavel);
+      if(!idExiste){
+        return response.status(400).json({
+          notification: "Não há testes de PSE Atleta com esse id."
+        });
+      }
+      if (!responsavelExiste) {
+        return response.status(400).json({
+          notification: "O número de matrícula do responsável não está cadastrado."
+        });
+      }
+
       const motivo = pseAtletaDelete.motivo;
       const timestamp = new Date();
 

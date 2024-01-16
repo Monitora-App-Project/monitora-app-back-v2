@@ -180,10 +180,10 @@ module.exports = {
   async getByTeste(request, response) {
     try {
       const { idTeste } = request.params;
-      const idExiste = await TesteModel.verificaIdTesteExiste(idTeste);
+      const idExiste = await ComposicaoCorporalModel.verificaIdTesteExiste(idTeste);
       if(!idExiste){
         return response.status(400).json({
-          notification: "Teste inexistente."
+          notification: "Não há testes de Composição Corporal com esse id."
         });
       }
       const result = await ComposicaoCorporalModel.getByTeste(idTeste);
