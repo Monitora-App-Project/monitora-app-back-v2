@@ -64,5 +64,11 @@ module.exports = {
       });
 
     return result;
+  },
+
+  async verificaIdTesteExiste(idTeste){
+    const result = await connection("cmj").where({ idTeste }).select("*").first();
+    if (result) return true;
+    else return false;
   }
 };

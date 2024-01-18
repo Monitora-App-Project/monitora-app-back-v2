@@ -1,6 +1,7 @@
 const FSKTModel = require("../models/FSKT");
 const TesteModel = require("../models/Teste");
 const LogsModel = require("../models/Logs");
+const UsuarioModel = require("../models/Usuario");
 
 const { pegaModalidade, calculaIdade, calcularKDI, calculaClassFSKT} = require("../utils/utilities");
 const { v4: uuidv4 } = require("uuid");
@@ -15,10 +16,30 @@ module.exports = {
       const fskt = request.body; 
       const matriculaAtleta = fskt.matriculaAtleta;
       const responsavel = fskt.responsavel;
-      delete fskt.matriculaAtleta;
-      delete fskt.responsavel;
       const id = uuidv4();
       const timestamp = new Date();
+
+      delete fskt.matriculaAtleta;
+      delete fskt.responsavel;
+
+      // Testes de existência 
+      const alunoExiste = await UsuarioModel.verificaMatriculaExiste(matriculaAtleta);
+      const responsavelExiste = await UsuarioModel.verificaMatriculaExiste(responsavel);
+      var idExiste = await TesteModel.verificaIdTesteExiste(id);
+      if (!alunoExiste) {
+        return response.status(400).json({
+          notification: "O número de matrícula do atleta não está cadastrado."
+        });
+      }
+      if (!responsavelExiste) {
+        return response.status(400).json({
+          notification: "O número de matrícula do responsável não está cadastrado."
+        });
+      }
+      while(idExiste){
+        id = uuidv4();        // Se o id ja existir, recalcula
+        idExiste = await TesteModel.verificaIdTesteExiste(id);
+      }
 
       // Cria teste geral
       const teste = {}; 
@@ -30,7 +51,7 @@ module.exports = {
       teste.idade = await calculaIdade(matriculaAtleta);
       await TesteModel.create(teste);
 
-      // Cria fskt
+      // Dados do teste especifico
       fskt.idTeste = id;
       fskt.fcMaxPredita = Math.round(208 - (0.7 * teste.idade));
       
@@ -59,7 +80,16 @@ module.exports = {
       fskt.deltaPas = fskt.rec5MinPressaoSis - fskt.rec1MinPressaoSis;
       fskt.deltaPad = fskt.rec5MinPressaoDias - fskt.rec1MinPressaoDias;
       
-      await FSKTModel.create(fskt); 
+      // Cria teste especifico
+      try {
+        await FSKTModel.create(fskt); 
+      } catch (err) {
+        await TesteModel.deleteById(id)
+        console.error(`FSKT creation failed: ${err}`);
+        return response.status(500).json({
+          notification: "Internal server error"
+        });
+      }
 
       // Cria log de Create
       const log = {};
@@ -108,6 +138,12 @@ module.exports = {
   async getByTeste(request, response) {
     try {
       const { idTeste } = request.params;
+      const idExiste = await FSKTModel.verificaIdTesteExiste(idTeste);
+      if(!idExiste){
+        return response.status(400).json({
+          notification: "Não há testes de FSKT com esse id."
+        });
+      }
       const result = await FSKTModel.getByTeste(idTeste);
       return response.status(200).json(result);
     } catch (err) {
@@ -135,9 +171,22 @@ module.exports = {
     try {
       const { idTeste } = request.params;
       const fsktUpdate = request.body;
+      const responsavel = fsktUpdate.responsavel;
+
+      const idExiste = await FSKTModel.verificaIdTesteExiste(idTeste);
+      const responsavelExiste = await UsuarioModel.verificaMatriculaExiste(responsavel);
+      if(!idExiste){
+        return response.status(400).json({
+          notification: "Não há testes de FSKT com esse id."
+        });
+      }
+      if (!responsavelExiste) {
+        return response.status(400).json({
+          notification: "O número de matrícula do responsável não está cadastrado."
+        });
+      }
 
       // Seta valores do log
-      const responsavel = fsktUpdate.responsavel;
       const motivo = fsktUpdate.motivo;
       delete fsktUpdate.responsavel;
       delete fsktUpdate.motivo;
@@ -183,6 +232,19 @@ module.exports = {
       const { idTeste } = request.params;
       const fsktDelete = request.body;
       const responsavel = fsktDelete.responsavel;
+      const idExiste = await FSKTModel.verificaIdTesteExiste(idTeste);
+      const responsavelExiste = await UsuarioModel.verificaMatriculaExiste(responsavel);
+      if(!idExiste){
+        return response.status(400).json({
+          notification: "Não há testes de FSKT com esse id."
+        });
+      }
+      if (!responsavelExiste) {
+        return response.status(400).json({
+          notification: "O número de matrícula do responsável não está cadastrado."
+        });
+      }
+
       const motivo = fsktDelete.motivo;
       const timestamp = new Date();
 

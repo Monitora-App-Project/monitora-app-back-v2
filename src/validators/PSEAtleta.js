@@ -13,8 +13,7 @@ module.exports = {
       responsavel: Joi.number().integer().required(),
 
       pseAtleta: Joi.number().integer().required(),
-      pseSessao: Joi.number().integer().required(),
-      duracaoTreino: Joi.number().required()
+      duracaoTreino: Joi.number().integer().required()
     })
   }),
 

@@ -64,5 +64,11 @@ module.exports = {
   async deleteByTeste(idTeste) {
     const result = await connection("pseAtleta").where({ idTeste }).delete();
     return result;
+  },
+  
+  async verificaIdTesteExiste(idTeste){
+    const result = await connection("pseAtleta").where({ idTeste }).select("*").first();
+    if (result) return true;
+    else return false;
   }
 };

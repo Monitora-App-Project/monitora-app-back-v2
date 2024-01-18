@@ -1,9 +1,11 @@
 const HooperModel = require("../models/Hooper");
 const TesteModel = require("../models/Teste");
 const LogsModel = require("../models/Logs");
+const UsuarioModel = require("../models/Usuario");
 
 const { pegaModalidade, calculaIdade } = require("../utils/utilities");
 const { v4: uuidv4 } = require("uuid");
+const Hooper = require("../models/Hooper");
 
 require("dotenv").config();
 
@@ -27,13 +29,33 @@ module.exports = {
       const hooper = request.body; // Chegam dados do teste geral e do hooper
       const matriculaAtleta = hooper.matriculaAtleta;
       const responsavel = hooper.responsavel;
-      delete hooper.matriculaAtleta;
-      delete hooper.responsavel;
       const id = uuidv4();
       const timestamp = new Date();
+      
+      delete hooper.matriculaAtleta;
+      delete hooper.responsavel;
+      
+      // Testes de existência 
+      const alunoExiste = await UsuarioModel.verificaMatriculaExiste(matriculaAtleta);
+      const responsavelExiste = await UsuarioModel.verificaMatriculaExiste(responsavel);
+      var idExiste = await TesteModel.verificaIdTesteExiste(id);
+      if (!alunoExiste) {
+        return response.status(400).json({
+          notification: "O número de matrícula do atleta não está cadastrado."
+        });
+      }
+      if (!responsavelExiste) {
+        return response.status(400).json({
+          notification: "O número de matrícula do responsável não está cadastrado."
+        });
+      }
+      while(idExiste){
+        id = uuidv4();        // Se o id ja existir, recalcula
+        idExiste = await TesteModel.verificaIdTesteExiste(id);
+      }
 
       // Cria teste geral
-      const teste = {}; // JSON que guarda os dados do teste geral
+      const teste = {}; 
       teste.id = id;
       teste.horaDaColeta = timestamp;
       teste.matriculaAtleta = matriculaAtleta;
@@ -42,14 +64,24 @@ module.exports = {
       teste.idade = await calculaIdade(matriculaAtleta);
       await TesteModel.create(teste);
 
-      // Cria hooper
+      // Dados do teste especifico
       hooper.idTeste = id;
       hooper.diaDaSemana = timestamp.getDay(); // 0 a 6
       hooper.semanaDoAno = timestamp.getWeek(); // Padrao ISO-
-      await HooperModel.create(hooper); // O restante dos dados a esta no objeto hooper
+
+      // Cria teste especifico
+      try {
+        await HooperModel.create(hooper); 
+      } catch (err) {
+        await TesteModel.deleteById(id)
+        console.error(`Hooper creation failed: ${err}`);
+        return response.status(500).json({
+          notification: "Internal server error"
+        });
+      }
 
       // Cria log de Create
-      const log = {}; // JSON que guarda os dados a serem inseridos no log
+      const log = {}; 
       log.id = uuidv4();
       log.responsavel = responsavel;
       log.data = timestamp;
@@ -72,7 +104,7 @@ module.exports = {
       const result = await HooperModel.getAll();
       return response.status(200).json(result);
     } catch (err) {
-      console.error(`CMJ getAll failed: ${err}`);
+      console.error(`Hooper getAll failed: ${err}`);
       return response.status(500).json({
         notification: "Internal server error"
       });
@@ -95,6 +127,12 @@ module.exports = {
   async getByTeste(request, response) {
     try {
       const { idTeste } = request.params;
+      const idExiste = await HooperModel.verificaIdTesteExiste(idTeste);
+      if(!idExiste){
+        return response.status(400).json({
+          notification: "Não há testes de Hooper com esse id."
+        });
+      }
       const result = await HooperModel.getByTeste(idTeste);
       return response.status(200).json(result);
     } catch (err) {
@@ -122,9 +160,21 @@ module.exports = {
     try {
       const { idTeste } = request.params;
       const hooperUpdate = request.body;
+      const responsavel = hooperUpdate.responsavel;
+      const idExiste = await HooperModel.verificaIdTesteExiste(idTeste);
+      const responsavelExiste = await UsuarioModel.verificaMatriculaExiste(responsavel);
+      if(!idExiste){
+        return response.status(400).json({
+          notification: "Não há testes de Hooper com esse id."
+        });
+      }
+      if (!responsavelExiste) {
+        return response.status(400).json({
+          notification: "O número de matrícula do responsável não está cadastrado."
+        });
+      }
 
       // Seta valores do log
-      const responsavel = hooperUpdate.responsavel;
       const motivo = hooperUpdate.motivo;
       delete hooperUpdate.responsavel;
       delete hooperUpdate.motivo;
@@ -156,6 +206,7 @@ module.exports = {
       } else {
         return response.status(200).json("Não há dados para serem alterados");
       }
+      
       return response.status(200).json("OK");
     } catch (err) {
       console.error(`Hooper update failed: ${err}`);
@@ -170,6 +221,19 @@ module.exports = {
       const { idTeste } = request.params;
       const hooperDelete = request.body;
       const responsavel = hooperDelete.responsavel;
+      const idExiste = await HooperModel.verificaIdTesteExiste(idTeste);
+      const responsavelExiste = await UsuarioModel.verificaMatriculaExiste(responsavel);
+      if(!idExiste){
+        return response.status(400).json({
+          notification: "Não há testes de Hooper com esse id."
+        });
+      }
+      if (!responsavelExiste) {
+        return response.status(400).json({
+          notification: "O número de matrícula do responsável não está cadastrado."
+        });
+      }
+
       const motivo = hooperDelete.motivo;
       const timestamp = new Date();
 

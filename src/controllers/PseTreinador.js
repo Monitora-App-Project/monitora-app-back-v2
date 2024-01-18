@@ -1,6 +1,7 @@
 const PseTreinadorModel = require("../models/PseTreinador");
 const TesteModel = require("../models/Teste");
 const LogsModel = require("../models/Logs");
+const UsuarioModel = require("../models/Usuario");
 
 const { pegaModalidade, calculaIdade } = require("../utils/utilities");
 const { v4: uuidv4 } = require("uuid");
@@ -28,10 +29,30 @@ module.exports = {
       const pseTreinador = request.body;
       const matriculaAtleta = pseTreinador.matriculaAtleta;
       const responsavel = pseTreinador.responsavel;
-      delete pseTreinador.matriculaAtleta;
-      delete pseTreinador.responsavel;
       const id = uuidv4();
       const timestamp = new Date();
+
+      delete pseTreinador.matriculaAtleta;
+      delete pseTreinador.responsavel;
+
+      // Testes de existência 
+      const alunoExiste = await UsuarioModel.verificaMatriculaExiste(matriculaAtleta);
+      const responsavelExiste = await UsuarioModel.verificaMatriculaExiste(responsavel);
+      var idExiste = await TesteModel.verificaIdTesteExiste(id);
+      if (!alunoExiste) {
+        return response.status(400).json({
+          notification: "O número de matrícula do atleta não está cadastrado."
+        });
+      }
+      if (!responsavelExiste) {
+        return response.status(400).json({
+          notification: "O número de matrícula do responsável não está cadastrado."
+        });
+      }
+      while(idExiste){
+        id = uuidv4();        // Se o id ja existir, recalcula
+        idExiste = await TesteModel.verificaIdTesteExiste(id);
+      }
 
       // Cria teste geral
       const teste = {}; // JSON que guarda os dados do teste geral
@@ -43,14 +64,24 @@ module.exports = {
       teste.idade = await calculaIdade(matriculaAtleta);
       await TesteModel.create(teste);
 
-      // Cria pseTreinador
+      // Dados do teste especifico
       pseTreinador.idTeste = id;
       pseTreinador.diaDaSemana = timestamp.getDay(); // 0 a 6
       pseTreinador.semanaDoAno = timestamp.getWeek(); // Padrao ISO-
-      await PseTreinadorModel.create(pseTreinador);
+      
+      // Cria teste especifico
+      try {
+        await PseTreinadorModel.create(pseTreinador); 
+      } catch (err) {
+        await TesteModel.deleteById(id)
+        console.error(`PSE Treinador creation failed: ${err}`);
+        return response.status(500).json({
+          notification: "Internal server error"
+        });
+      }
 
       // Cria log de Create
-      const log = {}; // JSON que guarda os dados a serem inseridos no log
+      const log = {}; 
       log.id = uuidv4();
       log.responsavel = responsavel;
       log.data = timestamp;
@@ -96,6 +127,12 @@ module.exports = {
   async getByTeste(request, response) {
     try {
       const { idTeste } = request.params;
+      const idExiste = await PseTreinadorModel.verificaIdTesteExiste(idTeste);
+      if(!idExiste){
+        return response.status(400).json({
+          notification: "Não há testes de PSE Treinador com esse id."
+        });
+      }
       const result = await PseTreinadorModel.getByTeste(idTeste);
       return response.status(200).json(result);
     } catch (err) {
@@ -123,9 +160,22 @@ module.exports = {
     try {
       const { idTeste } = request.params;
       const pseTreinadorUpdate = request.body;
+      const responsavel = pseTreinadorUpdate.responsavel;
+      
+      const idExiste = await PseTreinadorModel.verificaIdTesteExiste(idTeste);
+      const responsavelExiste = await UsuarioModel.verificaMatriculaExiste(responsavel);
+      if(!idExiste){
+        return response.status(400).json({
+          notification: "Não há testes de PSE Treinador com esse id."
+        });
+      }
+      if (!responsavelExiste) {
+        return response.status(400).json({
+          notification: "O número de matrícula do responsável não está cadastrado."
+        });
+      }
 
       // Seta valores do log
-      const responsavel = pseTreinadorUpdate.responsavel;
       const motivo = pseTreinadorUpdate.motivo;
       delete pseTreinadorUpdate.responsavel;
       delete pseTreinadorUpdate.motivo;
@@ -141,21 +191,22 @@ module.exports = {
       const stillExistFieldsToUpdate = Object.values(pseTreinadorUpdate).length > 0;
       if (stillExistFieldsToUpdate) {
         await PseTreinadorModel.updateByTeste(idTeste, pseTreinadorUpdate);
+        // Cria log
+        const log = {};
+        log.id = uuidv4();
+        log.responsavel = responsavel;
+        log.data = timestamp;
+        log.nomeTabela = "pseTreinador";
+        log.tabelaId = idTeste;
+        log.tipoAlteracao = "Update";
+        log.atributo = atributos.join(",");
+        log.valorAntigo = valoresAntigosValues.join(",");
+        log.novoValor = valoresNovos.join(",");
+        log.motivo = motivo;
+        await LogsModel.create(log);
+      } else {
+        return response.status(200).json("Não há dados para serem alterados");
       }
-
-      // Cria log
-      const log = {};
-      log.id = uuidv4();
-      log.responsavel = responsavel;
-      log.data = timestamp;
-      log.nomeTabela = "pseTreinador";
-      log.tabelaId = idTeste;
-      log.tipoAlteracao = "Update";
-      log.atributo = atributos.join(",");
-      log.valorAntigo = valoresAntigosValues.join(",");
-      log.novoValor = valoresNovos.join(",");
-      log.motivo = motivo;
-      await LogsModel.create(log);
 
       return response.status(200).json("OK");
     } catch (err) {
@@ -171,6 +222,19 @@ module.exports = {
       const { idTeste } = request.params;
       const pseTreinadorDelete = request.body;
       const responsavel = pseTreinadorDelete.responsavel;
+      const idExiste = await PseTreinadorModel.verificaIdTesteExiste(idTeste);
+      const responsavelExiste = await UsuarioModel.verificaMatriculaExiste(responsavel);
+      if(!idExiste){
+        return response.status(400).json({
+          notification: "Não há testes de PSE Treinador com esse id."
+        });
+      }
+      if (!responsavelExiste) {
+        return response.status(400).json({
+          notification: "O número de matrícula do responsável não está cadastrado."
+        });
+      }
+
       const motivo = pseTreinadorDelete.motivo;
       const timestamp = new Date();
 

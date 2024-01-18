@@ -1,6 +1,7 @@
 const ComposicaoCorporalModel = require("../models/ComposicaoCorporal");
 const TesteModel = require("../models/Teste");
 const LogsModel = require("../models/Logs");
+const UsuarioModel = require("../models/Usuario");
 
 const { pegaModalidade, calculaIdade, calcularMedia, getCadeirante } = require("../utils/utilities");
 const { v4: uuidv4 } = require("uuid");
@@ -16,12 +17,42 @@ module.exports = {
       const compCorp = request.body;
       const matriculaAtleta = compCorp.matriculaAtleta;
       const responsavel = compCorp.responsavel;
-      delete compCorp.matriculaAtleta;
-      delete compCorp.responsavel;
       const id = uuidv4();
       const timestamp = new Date();
 
-      // Informacoes que precisam de media
+      delete compCorp.matriculaAtleta;
+      delete compCorp.responsavel;
+      
+      // Testes de existência - adicionar teste do UUID depois
+      const alunoExiste = await UsuarioModel.verificaMatriculaExiste(matriculaAtleta);
+      const responsavelExiste = await UsuarioModel.verificaMatriculaExiste(responsavel);
+      var idExiste = await TesteModel.verificaIdTesteExiste(id);
+      if (!alunoExiste) {
+        return response.status(400).json({
+          notification: "O número de matrícula do atleta não está cadastrado."
+        });
+      }
+      if (!responsavelExiste) {
+        return response.status(400).json({
+          notification: "O número de matrícula do responsável não está cadastrado."
+        });
+      }
+      while(idExiste){
+        id = uuidv4();        // Se o id ja existir, recalcula
+        idExiste = await TesteModel.verificaIdTesteExiste(id);
+      }
+      
+      // Cria teste geral
+      const teste = {};
+      teste.id = id;
+      teste.horaDaColeta = timestamp;
+      teste.matriculaAtleta = matriculaAtleta;
+      teste.idTipoTeste = idTipoTeste;
+      teste.idModalidade = await pegaModalidade(matriculaAtleta);
+      teste.idade = await calculaIdade(matriculaAtleta);
+      await TesteModel.create(teste);
+      
+      // Dados do teste especifico
       const valoresOmbro = [compCorp.circOmbro1, compCorp.circOmbro2, compCorp.circOmbro3];
       const valoresTorax = [compCorp.circTorax1, compCorp.circTorax2, compCorp.circTorax3];
       const valoresBracoDir = [compCorp.circBracoDir1, compCorp.circBracoDir2, compCorp.circBracoDir3];
@@ -44,17 +75,6 @@ module.exports = {
       const valoresDcCoxa = [compCorp.dcCoxa1, compCorp.dcCoxa2, compCorp.dcCoxa3];
       const valoresDcPant = [compCorp.dcPant1, compCorp.dcPant2, compCorp.dcPant3];
 
-      // Cria teste geral
-      const teste = {};
-      teste.id = id;
-      teste.horaDaColeta = timestamp;
-      teste.matriculaAtleta = matriculaAtleta;
-      teste.idTipoTeste = idTipoTeste;
-      teste.idModalidade = await pegaModalidade(matriculaAtleta);
-      teste.idade = await calculaIdade(matriculaAtleta);
-      await TesteModel.create(teste);
-
-      // Cria Composicao Corporal
       compCorp.idTeste = id;
       compCorp.mediaCircOmbro = calcularMedia(valoresOmbro);
       compCorp.mediaCircTorax = calcularMedia(valoresTorax);
@@ -102,10 +122,19 @@ module.exports = {
       compCorp.massaGorda = compCorp.massaCorporal*(compCorp.percentualGordura/100);
       compCorp.massaIsentaDeGordura = compCorp.massaCorporal - compCorp.massaGorda;
 
-      await ComposicaoCorporalModel.create(compCorp); 
-
+      // Cria teste especifico
+      try {
+        await ComposicaoCorporalModel.create(compCorp); 
+      } catch (err) {
+        await TesteModel.deleteById(id)
+        console.error(`Composição Corporal creation failed: ${err}`);
+        return response.status(500).json({
+          notification: "Internal server error"
+        });
+      }
+      
       // Cria log de Create
-      const log = {}; // JSON que guarda os dados a serem inseridos no log
+      const log = {}; 
       log.id = uuidv4();
       log.responsavel = responsavel;
       log.data = timestamp;
@@ -151,6 +180,12 @@ module.exports = {
   async getByTeste(request, response) {
     try {
       const { idTeste } = request.params;
+      const idExiste = await ComposicaoCorporalModel.verificaIdTesteExiste(idTeste);
+      if(!idExiste){
+        return response.status(400).json({
+          notification: "Não há testes de Composição Corporal com esse id."
+        });
+      }
       const result = await ComposicaoCorporalModel.getByTeste(idTeste);
       return response.status(200).json(result);
     } catch (err) {
@@ -178,9 +213,21 @@ module.exports = {
     try {
       const { idTeste } = request.params;
       const compCorpUpdate = request.body;
+      const responsavel = compCorpUpdate.responsavel;
+      const idExiste = await ComposicaoCorporalModel.verificaIdTesteExiste(idTeste);
+      const responsavelExiste = await UsuarioModel.verificaMatriculaExiste(responsavel);
+      if(!idExiste){
+        return response.status(400).json({
+          notification: "Não há testes de Composição Corporal com esse id."
+        });
+      }
+      if (!responsavelExiste) {
+        return response.status(400).json({
+          notification: "O número de matrícula do responsável não está cadastrado."
+        });
+      }
 
       // Seta valores do log
-      const responsavel = compCorpUpdate.responsavel;
       const motivo = compCorpUpdate.motivo;
       delete compCorpUpdate.responsavel;
       delete compCorpUpdate.motivo;
@@ -196,21 +243,22 @@ module.exports = {
       const stillExistFieldsToUpdate = Object.values(compCorpUpdate).length > 0;
       if (stillExistFieldsToUpdate) {
         await ComposicaoCorporalModel.updateByTeste(idTeste, compCorpUpdate);
+        // Cria log
+        const log = {};
+        log.id = uuidv4();
+        log.responsavel = responsavel;
+        log.data = timestamp;
+        log.nomeTabela = "composicaoCorporal";
+        log.tabelaId = idTeste;
+        log.tipoAlteracao = "Update";
+        log.atributo = atributos.join(",");
+        log.valorAntigo = valoresAntigosValues.join(",");
+        log.novoValor = valoresNovos.join(",");
+        log.motivo = motivo;
+        await LogsModel.create(log);
+      } else {
+        return response.status(200).json("Não há dados para serem alterados");
       }
-
-      // Cria log
-      const log = {};
-      log.id = uuidv4();
-      log.responsavel = responsavel;
-      log.data = timestamp;
-      log.nomeTabela = "composicaoCorporal";
-      log.tabelaId = idTeste;
-      log.tipoAlteracao = "Update";
-      log.atributo = atributos.join(",");
-      log.valorAntigo = valoresAntigosValues.join(",");
-      log.novoValor = valoresNovos.join(",");
-      log.motivo = motivo;
-      await LogsModel.create(log);
 
       return response.status(200).json("OK");
     } catch (err) {
@@ -226,6 +274,19 @@ module.exports = {
       const { idTeste } = request.params;
       const compCorpDelete = request.body;
       const responsavel = compCorpDelete.responsavel;
+      const idExiste = await ComposicaoCorporalModel.verificaIdTesteExiste(idTeste);
+      const responsavelExiste = await UsuarioModel.verificaMatriculaExiste(responsavel);
+      if(!idExiste){
+        return response.status(400).json({
+          notification: "Não há testes de Composição Corporal com esse id."
+        });
+      }
+      if (!responsavelExiste) {
+        return response.status(400).json({
+          notification: "O número de matrícula do responsável não está cadastrado."
+        });
+      }
+
       const motivo = compCorpDelete.motivo;
       const timestamp = new Date();
 

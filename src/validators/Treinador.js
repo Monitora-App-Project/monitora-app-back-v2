@@ -40,7 +40,7 @@ module.exports = {
       temConvenio: Joi.boolean().required(),
       tipoConvenio: Joi.string().max(255),
       numeroConvenio: Joi.number().integer(),
-      tempoPratica: Joi.string().required(),
+      //tempoPratica: Joi.string().required(),
       fimAtendimentoCTE: Joi.date().required(),
       possuiDeficiencia: Joi.boolean().required(),
       tipoDeficiencia: Joi.string().max(255),
