@@ -46,6 +46,7 @@ module.exports = {
         recebeAuxilio,
         financiador,
         responsavel,
+        tempoPratica,
         ...dadosUsuario
       } = requestData;
 
@@ -69,7 +70,8 @@ module.exports = {
         inicioPratica,
         recebeAuxilio,
         financiador,
-        responsavel
+        responsavel,
+        tempoPratica
       };
 
       const responsavelColeta = dadosAtleta.responsavel;
