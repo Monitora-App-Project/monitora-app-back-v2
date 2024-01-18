@@ -15,13 +15,13 @@ module.exports = {
     try {
       // Salva informacoes gerais
       const cmj = request.body;
-      const matriculaAtleta = vfc.matriculaAtleta;
-      const responsavel = vfc.responsavel;
+      const matriculaAtleta = cmj.matriculaAtleta;
+      const responsavel = cmj.responsavel;
       const id = uuidv4();
       const timestamp = new Date();
       
-      delete vfc.matriculaAtleta;
-      delete vfc.responsavel;
+      delete cmj.matriculaAtleta;
+      delete cmj.responsavel;
       
       // Testes de existência 
       const alunoExiste = await UsuarioModel.verificaMatriculaExiste(matriculaAtleta);
@@ -54,6 +54,7 @@ module.exports = {
 
       // Dados do teste especifico
       const valoresCMJ = [cmj.cmj1, cmj.cmj2, cmj.cmj3];
+      cmj.idTeste = id;
       cmj.mediaCmj = calcularMedia(valoresCMJ);
       cmj.desvPadCmj = calcularDesvioPadrao(valoresCMJ, cmj.mediaCmj);
       cmj.coefVariacaoCmj = (cmj.desvPadCmj / cmj.mediaCmj) * 100;
@@ -74,7 +75,7 @@ module.exports = {
       // Cria log de Create
       const log = {};
       log.id = uuidv4();
-      log.responsavel = cmj.responsavel;
+      log.responsavel = responsavel;
       log.data = new Date();
       log.nomeTabela = "cmj";
       log.tabelaId = id;
@@ -151,7 +152,7 @@ module.exports = {
     try {
       const { idTeste } = request.params;
       const cmj = request.body;
-      const responsavel = vfcUpdate.responsavel;
+      const responsavel = cmjUpdate.responsavel;
       
       const idExiste = await CMJModel.verificaIdTesteExiste(idTeste);
       const responsavelExiste = await UsuarioModel.verificaMatriculaExiste(responsavel);

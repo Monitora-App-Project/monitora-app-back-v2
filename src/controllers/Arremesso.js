@@ -63,10 +63,10 @@ module.exports = {
       
       // Cria teste especifico
       try {
-        await ArremessoModel.create(fskt); 
+        await ArremessoModel.create(arremesso); 
       } catch (err) {
         await TesteModel.deleteById(id)
-        console.error(`FSKT creation failed: ${err}`);
+        console.error(`Arremesso creation failed: ${err}`);
         return response.status(500).json({
           notification: "Internal server error"
         });
@@ -213,11 +213,11 @@ module.exports = {
       const { idTeste } = request.params;
       const arremessoDelete = request.body;
       const responsavel = arremessoDelete.responsavel;
-      const idExiste = await FSKTModel.verificaIdTesteExiste(idTeste);
+      const idExiste = await ArremessoModel.verificaIdTesteExiste(idTeste);
       const responsavelExiste = await UsuarioModel.verificaMatriculaExiste(responsavel);
       if(!idExiste){
         return response.status(400).json({
-          notification: "Não há testes de FSKT com esse id."
+          notification: "Não há testes de Arremesso com esse id."
         });
       }
       if (!responsavelExiste) {
