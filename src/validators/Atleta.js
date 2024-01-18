@@ -50,6 +50,7 @@ module.exports = {
       nomeResponsavel: Joi.string().allow("").optional(),
       parentescoResponsavel: Joi.string().allow("").optional(),
       modalidade: Joi.string().uuid().required(),
+      tempoPratica: Joi.string().required(),
       treinador: Joi.number().required(),
       clubeOuAssociacao: Joi.string().allow("").optional(),
       federacao: Joi.string().allow("").optional(),

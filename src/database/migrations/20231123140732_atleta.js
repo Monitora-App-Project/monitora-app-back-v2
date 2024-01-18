@@ -4,6 +4,7 @@ exports.up = function(knex) {
     table.string("nomeResponsavel");
     table.string("parentescoResponsavel");
     table.uuid("modalidade").notNullable();
+    table.string("tempoPratica").notNullable();
     table.integer("treinador").notNullable();
     table.string("clubeOuAssociacao");
     table.string("federacao");
