@@ -161,6 +161,7 @@ module.exports = {
       const { idTeste } = request.params;
       const pseTreinadorUpdate = request.body;
       const responsavel = pseTreinadorUpdate.responsavel;
+      
       const idExiste = await PseTreinadorModel.verificaIdTesteExiste(idTeste);
       const responsavelExiste = await UsuarioModel.verificaMatriculaExiste(responsavel);
       if(!idExiste){
@@ -190,23 +191,22 @@ module.exports = {
       const stillExistFieldsToUpdate = Object.values(pseTreinadorUpdate).length > 0;
       if (stillExistFieldsToUpdate) {
         await PseTreinadorModel.updateByTeste(idTeste, pseTreinadorUpdate);
+        // Cria log
+        const log = {};
+        log.id = uuidv4();
+        log.responsavel = responsavel;
+        log.data = timestamp;
+        log.nomeTabela = "pseTreinador";
+        log.tabelaId = idTeste;
+        log.tipoAlteracao = "Update";
+        log.atributo = atributos.join(",");
+        log.valorAntigo = valoresAntigosValues.join(",");
+        log.novoValor = valoresNovos.join(",");
+        log.motivo = motivo;
+        await LogsModel.create(log);
       } else {
         return response.status(200).json("Não há dados para serem alterados");
       }
-
-      // Cria log
-      const log = {};
-      log.id = uuidv4();
-      log.responsavel = responsavel;
-      log.data = timestamp;
-      log.nomeTabela = "pseTreinador";
-      log.tabelaId = idTeste;
-      log.tipoAlteracao = "Update";
-      log.atributo = atributos.join(",");
-      log.valorAntigo = valoresAntigosValues.join(",");
-      log.novoValor = valoresNovos.join(",");
-      log.motivo = motivo;
-      await LogsModel.create(log);
 
       return response.status(200).json("OK");
     } catch (err) {

@@ -1,6 +1,8 @@
 const ArremessoModel = require("../models/Arremesso");
 const TesteModel = require("../models/Teste");
 const LogsModel = require("../models/Logs");
+const UsuarioModel = require("../models/Usuario");
+
 
 const { pegaModalidade, calculaIdade,  calcularMedia, calcularDesvioPadrao} = require("../utils/utilities");
 const { v4: uuidv4 } = require("uuid");
@@ -15,10 +17,30 @@ module.exports = {
       const arremesso = request.body; 
       const matriculaAtleta = arremesso.matriculaAtleta;
       const responsavel = arremesso.responsavel;
-      delete arremesso.matriculaAtleta;
-      delete arremesso.responsavel;
       const id = uuidv4();
       const timestamp = new Date();
+
+      delete arremesso.matriculaAtleta;
+      delete arremesso.responsavel;
+
+      // Testes de existência 
+      const alunoExiste = await UsuarioModel.verificaMatriculaExiste(matriculaAtleta);
+      const responsavelExiste = await UsuarioModel.verificaMatriculaExiste(responsavel);
+      var idExiste = await TesteModel.verificaIdTesteExiste(id);
+      if (!alunoExiste) {
+        return response.status(400).json({
+          notification: "O número de matrícula do atleta não está cadastrado."
+        });
+      }
+      if (!responsavelExiste) {
+        return response.status(400).json({
+          notification: "O número de matrícula do responsável não está cadastrado."
+        });
+      }
+      while(idExiste){
+        id = uuidv4();        // Se o id ja existir, recalcula
+        idExiste = await TesteModel.verificaIdTesteExiste(id);
+      }
 
       // Cria teste geral
       const teste = {};
@@ -30,7 +52,7 @@ module.exports = {
       teste.idade = await calculaIdade(matriculaAtleta);
       await TesteModel.create(teste);
 
-      // Cria arremesso
+      // Dados do teste especifico
       const valoresArremesso = [arremesso.arremesso1, arremesso.arremesso2, arremesso.arremesso3];
       arremesso.idTeste = id;
       arremesso.mediaArremesso = calcularMedia(valoresArremesso);
@@ -38,7 +60,17 @@ module.exports = {
       arremesso.minArremesso = Math.min(...valoresArremesso)
       arremesso.desvPadArremesso = calcularDesvioPadrao(valoresArremesso, arremesso.mediaArremesso);
       arremesso.coefVariacaoArremesso = (arremesso.desvPadArremesso/arremesso.mediaArremesso)*100;
-      await ArremessoModel.create(arremesso); 
+      
+      // Cria teste especifico
+      try {
+        await ArremessoModel.create(fskt); 
+      } catch (err) {
+        await TesteModel.deleteById(id)
+        console.error(`FSKT creation failed: ${err}`);
+        return response.status(500).json({
+          notification: "Internal server error"
+        });
+      } 
 
       // Cria log de Create
       const log = {}; 
@@ -87,6 +119,12 @@ module.exports = {
   async getByTeste(request, response) {
     try {
       const { idTeste } = request.params;
+      const idExiste = await ArremessoModel.verificaIdTesteExiste(idTeste);
+      if(!idExiste){
+        return response.status(400).json({
+          notification: "Não há testes de Arremesso com esse id."
+        });
+      }
       const result = await ArremessoModel.getByTeste(idTeste);
       return response.status(200).json(result);
     } catch (err) {
@@ -114,9 +152,22 @@ module.exports = {
     try {
       const { idTeste } = request.params;
       const arremessoUpdate = request.body;
+      const responsavel = arremessoUpdate.responsavel;
+
+      const idExiste = await ArremessoModel.verificaIdTesteExiste(idTeste);
+      const responsavelExiste = await UsuarioModel.verificaMatriculaExiste(responsavel);
+      if(!idExiste){
+        return response.status(400).json({
+          notification: "Não há testes de Arremesso com esse id."
+        });
+      }
+      if (!responsavelExiste) {
+        return response.status(400).json({
+          notification: "O número de matrícula do responsável não está cadastrado."
+        });
+      }
 
       // Seta valores do log
-      const responsavel = arremessoUpdate.responsavel;
       const motivo = arremessoUpdate.motivo;
       delete arremessoUpdate.responsavel;
       delete arremessoUpdate.motivo;
@@ -162,6 +213,19 @@ module.exports = {
       const { idTeste } = request.params;
       const arremessoDelete = request.body;
       const responsavel = arremessoDelete.responsavel;
+      const idExiste = await FSKTModel.verificaIdTesteExiste(idTeste);
+      const responsavelExiste = await UsuarioModel.verificaMatriculaExiste(responsavel);
+      if(!idExiste){
+        return response.status(400).json({
+          notification: "Não há testes de FSKT com esse id."
+        });
+      }
+      if (!responsavelExiste) {
+        return response.status(400).json({
+          notification: "O número de matrícula do responsável não está cadastrado."
+        });
+      }
+      
       const motivo = arremessoDelete.motivo;
       const timestamp = new Date();
 

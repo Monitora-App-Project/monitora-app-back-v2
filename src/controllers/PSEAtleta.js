@@ -191,24 +191,23 @@ module.exports = {
       const stillExistFieldsToUpdate = Object.values(pseAtletaUpdate).length > 0;
       if (stillExistFieldsToUpdate) {
         await PseAtletaModel.updateByTeste(idTeste, pseAtletaUpdate);
+        // Cria log
+        const log = {};
+        log.id = uuidv4();
+        log.responsavel = responsavel;
+        log.data = timestamp;
+        log.nomeTabela = "pseAtleta";
+        log.tabelaId = idTeste;
+        log.tipoAlteracao = "Update";
+        log.atributo = atributos.join(",");
+        log.valorAntigo = valoresAntigosValues.join(",");
+        log.novoValor = valoresNovos.join(",");
+        log.motivo = motivo;
+        await LogsModel.create(log);
       } else {
         return response.status(200).json("Não há dados para serem alterados");
       }
-
-      // Cria log
-      const log = {};
-      log.id = uuidv4();
-      log.responsavel = responsavel;
-      log.data = timestamp;
-      log.nomeTabela = "pseAtleta";
-      log.tabelaId = idTeste;
-      log.tipoAlteracao = "Update";
-      log.atributo = atributos.join(",");
-      log.valorAntigo = valoresAntigosValues.join(",");
-      log.novoValor = valoresNovos.join(",");
-      log.motivo = motivo;
-      await LogsModel.create(log);
-
+      
       return response.status(200).json("OK");
     } catch (err) {
       console.error(`PSEAtleta update failed: ${err}`);
