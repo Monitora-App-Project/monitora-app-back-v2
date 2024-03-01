@@ -9,8 +9,8 @@ const auth = require('../../middlewares/authentication');
 
 pseAtletaRouter.post(
   '/',
-  PseAtletaValidator.create,
-  auth.authenticateToken,
+  // PseAtletaValidator.create,
+  // auth.authenticateToken,
   PseAtletaController.create
 );
 pseAtletaRouter.get(

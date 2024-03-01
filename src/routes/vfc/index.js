@@ -9,8 +9,8 @@ const auth = require('../../middlewares/authentication');
 
 vfcRouter.post(
   '/',
-  vfcValidator.create,
-  auth.authenticateToken,
+  // vfcValidator.create,
+  // auth.authenticateToken,
   vfcController.create
 );
 vfcRouter.get(

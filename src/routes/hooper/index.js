@@ -8,8 +8,8 @@ const auth = require('../../middlewares/authentication');
 
 hooperRouter.post(
   '/',
-  HooperValidator.create,
-  auth.authenticateToken,
+  // HooperValidator.create,
+  // auth.authenticateToken,
   HooperController.create
 );
 hooperRouter.get(

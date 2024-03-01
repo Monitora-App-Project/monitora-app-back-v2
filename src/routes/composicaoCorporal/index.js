@@ -9,8 +9,8 @@ const auth = require('../../middlewares/authentication');
 
 compCorpRouter.post(
   '/',
-  compCorpValidator.create,
-  auth.authenticateToken,
+  // compCorpValidator.create,
+  // auth.authenticateToken,
   compCorpController.create
 );
 compCorpRouter.get(

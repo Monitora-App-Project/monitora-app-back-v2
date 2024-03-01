@@ -25,8 +25,8 @@ alunoRouter.get(
 );
 alunoRouter.post(
   '/',
-  AlunoValidator.create,
-  auth.authenticateToken,
+  // AlunoValidator.create,
+  // auth.authenticateToken,
   AlunoController.create
 );
 alunoRouter.put(

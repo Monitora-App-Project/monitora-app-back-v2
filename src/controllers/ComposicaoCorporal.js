@@ -10,6 +10,20 @@ require("dotenv").config();
 
 const idTipoTeste = 1;
 
+const converterTimestamp = (timestamp) => {
+  const partes = timestamp.split(" ");
+  const dataPartes = partes[0].split("-");
+  const horaPartes = partes[1].split(":");
+  return new Date(
+    parseInt(dataPartes[0]),
+    parseInt(dataPartes[1]) - 1, // O mês no JavaScript é baseado em zero
+    parseInt(dataPartes[2]),
+    parseInt(horaPartes[0]),
+    parseInt(horaPartes[1]),
+    parseInt(horaPartes[2])
+  );
+}
+
 module.exports = {
   async create(request, response) {
     try {
@@ -18,11 +32,12 @@ module.exports = {
       const matriculaAtleta = compCorp.matriculaAtleta;
       const responsavel = compCorp.responsavel;
       const id = uuidv4();
-      const timestamp = new Date();
+      const timestamp = converterTimestamp(compCorp.timestamp);
 
       delete compCorp.matriculaAtleta;
       delete compCorp.responsavel;
-      
+      delete compCorp.timestamp;
+
       // Testes de existência - adicionar teste do UUID depois
       const alunoExiste = await UsuarioModel.verificaMatriculaExiste(matriculaAtleta);
       const responsavelExiste = await UsuarioModel.verificaMatriculaExiste(responsavel);

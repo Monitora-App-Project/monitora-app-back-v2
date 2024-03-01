@@ -8,8 +8,8 @@ const auth = require('../../middlewares/authentication');
 
 hooperRouter.post(
   '/',
-  FSKTValidator.create,
-  auth.authenticateToken,
+  // FSKTValidator.create,
+  // auth.authenticateToken,
   FSKTController.create
 );
 hooperRouter.get(

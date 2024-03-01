@@ -8,8 +8,8 @@ const auth = require('../../middlewares/authentication');
 
 arremessoRouter.post(
   '/',
-  ArremessoValidator.create,
-  auth.authenticateToken,
+  // ArremessoValidator.create,
+  // auth.authenticateToken,
   ArremessoController.create
 );
 arremessoRouter.get(

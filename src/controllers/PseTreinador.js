@@ -10,6 +10,20 @@ require("dotenv").config();
 
 const idTipoTeste = 4;
 
+const converterTimestamp = (timestamp) => {
+  const partes = timestamp.split(" ");
+  const dataPartes = partes[0].split("-");
+  const horaPartes = partes[1].split(":");
+  return new Date(
+    parseInt(dataPartes[0]),
+    parseInt(dataPartes[1]) - 1, // O mês no JavaScript é baseado em zero
+    parseInt(dataPartes[2]),
+    parseInt(horaPartes[0]),
+    parseInt(horaPartes[1]),
+    parseInt(horaPartes[2])
+  );
+}
+
 // Returns the ISO week of the date.
 Date.prototype.getWeek = function () {
   var date = new Date(this.getTime());
@@ -30,10 +44,11 @@ module.exports = {
       const matriculaAtleta = pseTreinador.matriculaAtleta;
       const responsavel = pseTreinador.responsavel;
       const id = uuidv4();
-      const timestamp = new Date();
+      const timestamp = converterTimestamp(pseTreinador.timestamp);
 
       delete pseTreinador.matriculaAtleta;
       delete pseTreinador.responsavel;
+      delete pseTreinador.timestamp;
 
       // Testes de existência 
       const alunoExiste = await UsuarioModel.verificaMatriculaExiste(matriculaAtleta);

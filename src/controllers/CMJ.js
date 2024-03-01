@@ -18,10 +18,11 @@ module.exports = {
       const matriculaAtleta = cmj.matriculaAtleta;
       const responsavel = cmj.responsavel;
       const id = uuidv4();
-      const timestamp = new Date();
+      const timestamp = cmj.timestamp;
       
       delete cmj.matriculaAtleta;
       delete cmj.responsavel;
+      delete cmj.timestamp;
       
       // Testes de existência 
       const alunoExiste = await UsuarioModel.verificaMatriculaExiste(matriculaAtleta);

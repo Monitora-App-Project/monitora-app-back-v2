@@ -13,8 +13,8 @@ usuarioRouter.get('/',
 );
 usuarioRouter.get(
   '/fields',
-  UsuarioValidator.getById,
-  auth.authenticateToken,
+  // UsuarioValidator.getById,
+  // auth.authenticateToken,
   UsuarioController.getByFields
 );
 usuarioRouter.get(

@@ -31,8 +31,8 @@ cmjRouter.get(
 );
 cmjRouter.post(
   '/',
-  CMJValidator.create,
-  auth.authenticateToken,
+  // CMJValidator.create,
+  // auth.authenticateToken,
   CMJController.create
 );
 cmjRouter.put(
